@@ -1,0 +1,23 @@
+name: reproallthethings
+dependencies:
+  - pip
+  - pip:
+    - -e .  # conda >= 4.4 only
+    - python-dotenv>=0.5.1
+    - nbval
+    - nbdime
+  - setuptools
+  - wheel
+  - sphinx
+  - click
+  - coverage
+  - pytest-cov
+  - jupyter
+  - scikit-learn
+  - joblib
+  - nb_conda
+  - pandas
+  - requests
+  - pathlib
+  - python=3
+

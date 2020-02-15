@@ -1,0 +1,7 @@
+ARCH := $(shell arch)
+CONDA_EXE ?= /opt/software/anaconda3/bin/anaconda
+MODULE_NAME := src
+PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+PROJECT_NAME := reproallthethings
+PYTHON_INTERPRETER := python3
+VIRTUALENV := conda
