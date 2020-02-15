@@ -1,0 +1,10 @@
+[
+  {
+    "datasource_name": "beer_styles_srm",
+    "output_dataset": "beer_styles_srm_all"
+  },
+  {
+    "datasource_name": "beer_review",
+    "output_dataset": "beer_review_all"
+  }
+]

@@ -1,4 +1,4 @@
-name: reproallthethings
+name: embedallthethings2
 dependencies:
   - pip
   - pip:
@@ -6,6 +6,9 @@ dependencies:
     - python-dotenv>=0.5.1
     - nbval
     - nbdime
+    - datashader
+    - holoviews
+    - umap-learn>=0.4.0rc1
   - setuptools
   - wheel
   - sphinx
@@ -19,5 +22,7 @@ dependencies:
   - pandas
   - requests
   - pathlib
-  - python=3
+  - python=3.8
+  - seaborn
+  - bokeh
 
