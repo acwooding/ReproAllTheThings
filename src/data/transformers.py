@@ -24,13 +24,14 @@ def available_transformers(keys_only=True):
 
     The valid algorithm names, and the function they map to, are:
 
-    ============        ====================================
-    string              Transformer Function
-    ============        ====================================
-    train_test_split    train_test_split_xform
-    pivot               pivot
-    index_to_date_time  index_to_date_time
-    ============        ====================================
+    ============                ====================================
+    string                      Transformer Function
+    ============                ====================================
+    train_test_split            train_test_split_xform
+    pivot                       pivot
+    index_to_date_time          index_to_date_time
+    add_srm_to_reviews          add_srm_to_reviews
+    ============                ====================================
 
     Parameters
     ----------
@@ -38,6 +39,7 @@ def available_transformers(keys_only=True):
         If True, return only keys. Otherwise, return a dictionary mapping keys to algorithms
     """
     _TRANSFORMERS = {
+        "add_srm_to_reviews": add_srm_to_reviews,
         "index_to_date_time": index_to_date_time,
         "pivot": pivot,
         "train_test_split": split_dataset_test_train,
@@ -111,3 +113,61 @@ def index_to_date_time(dset, suffix='dt'):
     df.reset_index(inplace=True, drop=True)
     new_ds = Dataset(dataset_name=f"{dset.name}_{suffix}", metadata=dset.metadata, data=df)
     return new_ds
+
+def add_srm_to_reviews(review_dset, *, srm_dset_name):
+    """
+    Augments beer reviews with SRM (color assessment) data.
+    
+    See notebook 04 for what this does and why.
+    
+    Parameters
+    ----------
+    review_dset:
+        beer review dataset as a pandas dataframe
+    srm_dset_name: string
+        name of corresponding srm Dataset
+
+    Returns
+    -------
+    style-by-review DataFrame
+    """
+    
+    reviews = review_dset.data
+    srm_ds = Dataset.load(srm_dset_name)
+    srm_data = srm_ds.data
+    
+    # Groupby to select the fields that we want to use
+    beer_style = reviews.groupby('beer_style').agg({
+        'beer_name':lambda x: x.mode(),
+        'brewery_name':lambda x: x.mode(),
+        'beer_abv':'mean',
+        'review_aroma':'mean',
+        'review_appearance':'mean',
+        'review_palate':'mean',
+        'review_taste':'mean',
+        'review_overall':'mean',
+        'review_profilename':len
+    }).reset_index()
+
+    beer_style.columns = """beer_style common_beer common_brewer abv 
+    aroma appearance overall palate taste
+    num_reviews""".split()
+    
+    # Augment beer style with SRM and RGB data
+    beer_style = beer_style.merge(srm_data[['kaggle_review_style','Style Category',
+                                            'SRM Mid','srm_rgb']], how='left',
+                    left_on='beer_style', right_on='kaggle_review_style')
+    beer_style.rename(columns={'SRM Mid':'srm_mid', 'Style Category':'style_category'},
+                      inplace=True)
+
+    # subselect the columns we want to work with
+    numeric_columns = 'aroma appearance palate taste'.split()
+    style_by_reviews = beer_style[numeric_columns]
+    merged_meta = {'descr': "Beer reviews augmented with SRM (colour) data. "
+                   f"See {review_dset.DATASET_NAME} and {srm_ds.DATASET_NAME} "
+                   "Datasets for complete details.",
+                   'license': f"See license information from {review_dset.DATASET_NAME} and "
+                   f"{srm_ds.DATASET_NAME} Datasets."
+    }
+    ds = Dataset(dataset_name="beer_style_by_reviews", metadata=merged_meta, data=style_by_reviews)
+    return ds
