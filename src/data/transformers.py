@@ -160,14 +160,12 @@ def add_srm_to_reviews(review_dset, *, srm_dset_name):
     beer_style.rename(columns={'SRM Mid':'srm_mid', 'Style Category':'style_category'},
                       inplace=True)
 
-    # subselect the columns we want to work with
-    numeric_columns = 'aroma appearance palate taste'.split()
-    style_by_reviews = beer_style[numeric_columns]
+    # merge the metadata
     merged_meta = {'descr': "Beer reviews augmented with SRM (colour) data. "
                    f"See {review_dset.DATASET_NAME} and {srm_ds.DATASET_NAME} "
                    "Datasets for complete details.",
                    'license': f"See license information from {review_dset.DATASET_NAME} and "
                    f"{srm_ds.DATASET_NAME} Datasets."
     }
-    ds = Dataset(dataset_name="beer_style_by_reviews", metadata=merged_meta, data=style_by_reviews)
+    ds = Dataset(dataset_name="beer_style", metadata=merged_meta, data=beer_style)
     return ds

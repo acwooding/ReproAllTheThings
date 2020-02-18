@@ -9,7 +9,7 @@
   },
   {
     "input_dataset": "beer_review_all",
-    "output_dataset": "beer_style_by_reviews",
+    "output_dataset": "beer_style",
     "transformations": [
       [
         "add_srm_to_reviews",
