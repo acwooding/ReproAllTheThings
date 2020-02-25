@@ -2,8 +2,10 @@ import sys
 import pathlib
 import os
 from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from .datasets import Dataset
 from ..logging import logger
+from ..utils import custom_join
 
 __all__ = [
     'available_transformers'
@@ -31,6 +33,8 @@ def available_transformers(keys_only=True):
     pivot                       pivot
     index_to_date_time          index_to_date_time
     add_srm_to_reviews          add_srm_to_reviews
+    groupby_style_to_reviewers  groupby_style_to_reviewers
+    sklearn_transform           sklearn_transform
     ============                ====================================
 
     Parameters
@@ -40,14 +44,51 @@ def available_transformers(keys_only=True):
     """
     _TRANSFORMERS = {
         "add_srm_to_reviews": add_srm_to_reviews,
+        "groupby_style_to_reviewers": groupby_style_to_reviewers,
         "index_to_date_time": index_to_date_time,
         "pivot": pivot,
+        "sklearn_transform": sklearn_transform,
         "train_test_split": split_dataset_test_train,
     }
 
     if keys_only:
         return list(_TRANSFORMERS.keys())
     return _TRANSFORMERS
+
+
+def sklearn_transformers(keys_only=True):
+    """Valid sklearn-style transformers
+
+    This function simply returns a dict of known
+    tranformer algorithms strings and their corresponding
+    function call
+
+    It exists to allow for a description of the mapping for
+    each of the valid strings as a docstring
+
+    The valid algorithm names, and the function they map to, are:
+
+    ============                ====================================
+    string                      Transformer Function
+    ============                ====================================
+    CountVectorizer             sklearn.feature_extraction.text.CountVectorizer
+    TfidfVectorizer             sklearn.feature_extraction.text.TfidfVectorizer
+    ============                ====================================
+
+    Parameters
+    ----------
+    keys_only: boolean
+        If True, return only keys. Otherwise, return a dictionary mapping keys to algorithms
+    """
+    _SK_TRANSFORMERS = {
+        "CountVectorizer": CountVectorizer,
+        "TfidfVectorizer": TfidfVectorizer,
+    }
+
+    if keys_only:
+        return list(_SK_TRANSFORMERS.keys())
+    return _SK_TRANSFORMERS
+
 
 def split_dataset_test_train(dset,
                              dump_path=None, dump_metadata=True,
@@ -100,7 +141,7 @@ def pivot(dset, **pivot_opts):
         keyword arguments passed to pandas.Dataframe.pivot_table
     """
     pivoted = dset.data.pivot_table(**pivot_opts)
-    ds_pivot = Dataset(name=f"{dset.name}_pivoted", metadata=dset.metadata, data=pivoted, target=None)
+    ds_pivot = Dataset(dataset_name=f"{dset.name}_pivoted", metadata=dset.metadata, data=pivoted, target=None)
     ds_pivot.metadata['pivot_opts'] = pivot_opts
 
     return ds_pivot
@@ -113,6 +154,44 @@ def index_to_date_time(dset, suffix='dt'):
     df.reset_index(inplace=True, drop=True)
     new_ds = Dataset(dataset_name=f"{dset.name}_{suffix}", metadata=dset.metadata, data=df)
     return new_ds
+
+def sklearn_transform(dset, transformer_name, transformer_opts=None, subselect_column=None, **opts):
+    """
+    Wrapper for any 1:1 (data in to data out) sklearn style transformer. Will run the .fit_transform
+    method of the transformer on dset.data. If subselect_column is not None, it will treat the data
+    like a dataframe and will subselect dset.data[subselect_column] to run the transformer on.
+
+    Parameters
+    ----------
+    dset:
+        Dataset
+    transformer_name: string
+        sklearn style transformer with a .fit_transform method avaible via sklearn_transformers.
+    transformer_opts: dict
+        options to pass on to the transformer
+    subselect_column: string
+        column name for dset.data to run the transformer on
+    return_whole: boolean
+        return the whole dataframe with a new column named "transformed"
+    **opts:
+        options to pass on to the fit_transform method
+
+    Returns
+    -------
+    Dataset whose data is the result of the transformer.fit_transform
+    """
+    if transformer_name in sklearn_transformers():
+        transformer = sklearn_transformers(keys_only=False).get(transformer_name)(**transformer_opts)
+    else:
+        raise ValueError(f"Invalid transformer name: {transformer_name}. See sklearn_transformers for available names.")
+    if subselect_column:
+        new_data = transformer.fit_transform(dset.data[subselect_column], **opts)
+    else:
+        new_data = transformer.fit_transform(dset.data, **opts)
+
+    ds = Dataset(dataset_name=f"{dset.name}_{transformer.__class__.__name__}", metadata=dset.metadata, data=new_data)
+    return ds
+    
 
 def add_srm_to_reviews(review_dset, *, srm_dset_name):
     """
@@ -168,4 +247,43 @@ def add_srm_to_reviews(review_dset, *, srm_dset_name):
                    f"{srm_ds.DATASET_NAME} Datasets."
     }
     ds = Dataset(dataset_name="beer_style", metadata=merged_meta, data=beer_style)
+    return ds
+
+
+def groupby_style_to_reviewers(review_dset):
+    """
+    Turn our reviews data frame into a frame with one row per beer style instead of one row per review.
+
+    We groupby the column we'd like to embedd and then use agg with a dictionary of column names to 
+    aggregation functions to tell it how to summarize the many reviews about a single beer into one record.
+    (Median and max are great functions for dealing with numeric fields).
+    
+    Parameters
+    ----------
+    review_dset: Dataset
+        Dataset containing the beer reviews data
+        
+    Returns
+    -------
+    beer style dataset with a dataframe representing beer style by reviewers
+    """
+    reviews = review_dset.data
+    unique_join = lambda x: custom_join(x.unique(), " ")
+    beer_style = reviews.groupby('beer_style').agg({
+        'beer_name':lambda x: x.mode(),
+        'brewery_name':lambda x: x.mode(),
+        'beer_abv':'mean',
+        'review_aroma':'mean',
+        'review_appearance':'mean',
+        'review_overall':'mean',
+        'review_palate':'mean',
+        'review_taste':'mean',
+        'review_profilename':[unique_join, len],
+        'brewery_id':lambda x: len(x.unique()),
+    }).reset_index()
+
+    beer_style.columns = """beer_style beer_name brewery_name beer_abv 
+    review_aroma review_appearance review_overall review_palate review_taste 
+    review_profilename_list num_reviewers num_ids""".split()
+    ds = Dataset(dataset_name="beer_style_reviewers", metadata=review_dset.metadata, data=beer_style)
     return ds

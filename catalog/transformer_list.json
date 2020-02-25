@@ -18,5 +18,32 @@
         }
       ]
     ]
+  },
+  {
+    "input_dataset": "beer_review_all",
+    "output_dataset": "beer_style_reviewers",
+    "transformations": [
+      [
+        "groupby_style_to_reviewers",
+        {}
+      ]
+    ]
+  },
+  {
+    "input_dataset": "beer_style_reviewers",
+    "output_dataset": "style_by_authors",
+    "transformations": [
+      [
+        "sklearn_transform",
+        {
+          "subselect_column": "review_profilename_list",
+          "transformer_name": "CountVectorizer",
+          "transformer_opts": {
+            "binary": true,
+            "min_df": 10
+          }
+        }
+      ]
+    ]
   }
 ]
