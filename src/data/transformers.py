@@ -1,3 +1,4 @@
+
 import sys
 import pathlib
 import os
@@ -35,6 +36,7 @@ def available_transformers(keys_only=True):
     add_srm_to_reviews          add_srm_to_reviews
     groupby_style_to_reviewers  groupby_style_to_reviewers
     sklearn_transform           sklearn_transform
+    groupby_beer_to_reviewers   groupby_beer_to_reviewers
     ============                ====================================
 
     Parameters
@@ -44,6 +46,7 @@ def available_transformers(keys_only=True):
     """
     _TRANSFORMERS = {
         "add_srm_to_reviews": add_srm_to_reviews,
+        "groupby_beer_to_reviewers": groupby_beer_to_reviewers,
         "groupby_style_to_reviewers": groupby_style_to_reviewers,
         "index_to_date_time": index_to_date_time,
         "pivot": pivot,
@@ -191,14 +194,14 @@ def sklearn_transform(dset, transformer_name, transformer_opts=None, subselect_c
 
     ds = Dataset(dataset_name=f"{dset.name}_{transformer.__class__.__name__}", metadata=dset.metadata, data=new_data)
     return ds
-    
+
 
 def add_srm_to_reviews(review_dset, *, srm_dset_name):
     """
     Augments beer reviews with SRM (color assessment) data.
-    
+
     See notebook 04 for what this does and why.
-    
+
     Parameters
     ----------
     review_dset:
@@ -210,11 +213,11 @@ def add_srm_to_reviews(review_dset, *, srm_dset_name):
     -------
     style-by-review DataFrame
     """
-    
+
     reviews = review_dset.data
     srm_ds = Dataset.load(srm_dset_name)
     srm_data = srm_ds.data
-    
+
     # Groupby to select the fields that we want to use
     beer_style = reviews.groupby('beer_style').agg({
         'beer_name':lambda x: x.mode(),
@@ -228,10 +231,10 @@ def add_srm_to_reviews(review_dset, *, srm_dset_name):
         'review_profilename':len
     }).reset_index()
 
-    beer_style.columns = """beer_style common_beer common_brewer abv 
+    beer_style.columns = """beer_style common_beer common_brewer abv
     aroma appearance overall palate taste
     num_reviews""".split()
-    
+
     # Augment beer style with SRM and RGB data
     beer_style = beer_style.merge(srm_data[['kaggle_review_style','Style Category',
                                             'SRM Mid','srm_rgb']], how='left',
@@ -254,15 +257,15 @@ def groupby_style_to_reviewers(review_dset):
     """
     Turn our reviews data frame into a frame with one row per beer style instead of one row per review.
 
-    We groupby the column we'd like to embedd and then use agg with a dictionary of column names to 
+    We groupby the column we'd like to embedd and then use agg with a dictionary of column names to
     aggregation functions to tell it how to summarize the many reviews about a single beer into one record.
     (Median and max are great functions for dealing with numeric fields).
-    
+
     Parameters
     ----------
     review_dset: Dataset
         Dataset containing the beer reviews data
-        
+
     Returns
     -------
     beer style dataset with a dataframe representing beer style by reviewers
@@ -282,8 +285,52 @@ def groupby_style_to_reviewers(review_dset):
         'brewery_id':lambda x: len(x.unique()),
     }).reset_index()
 
-    beer_style.columns = """beer_style beer_name brewery_name beer_abv 
-    review_aroma review_appearance review_overall review_palate review_taste 
+    beer_style.columns = """beer_style beer_name brewery_name beer_abv
+    review_aroma review_appearance review_overall review_palate review_taste
     review_profilename_list num_reviewers num_ids""".split()
     ds = Dataset(dataset_name="beer_style_reviewers", metadata=review_dset.metadata, data=beer_style)
+    return ds
+
+
+def groupby_beer_to_reviewers(review_dset, positive_threshold=4.5):
+    """
+    Turn our reviews data frame into a frame with one row per beer instead of one row per review.
+
+    We will also restrict to positive reviews only (by default > 4.5)
+
+    Parameters
+    ----------
+    review_dset: Dataset
+        Dataset containing the beer reviews data
+
+    positive_threshold: Default: 4.5
+        Number between 0 and 5 representing the threshold for a postive review (aka. a positive
+        review is defined as a review with a value greater than positive_threshold).
+
+    Returns
+    -------
+    beer dataset with a dataframe representing beer by positive reviewers
+    """
+    reviews = review_dset.data
+    pos_reviews = reviews[reviews.review_overall>=positive_threshold]
+
+    unique_join = lambda x: custom_join(x.unique(), " ")
+    beer = reviews.groupby('beer_beerid').agg({
+        'beer_name':'first',
+        'brewery_name':'first',
+        'beer_style':'first',
+        'beer_abv':'mean',
+        'review_aroma':'mean',
+        'review_appearance':'mean',
+        'review_overall':'mean',
+        'review_palate':'mean',
+        'review_taste':'mean',
+        'review_profilename':[unique_join, len]
+    }).reset_index()
+
+    beer.columns = """beer_beerid beer_name brewery_name beer_style beer_abv
+    review_aroma review_appearance review_overall review_palate review_taste
+    review_profilename_list review_profilename_len""".split()
+
+    ds = Dataset(dataset_name="beer_positive_reviewers", metadata=review_dset.metadata, data=beer)
     return ds

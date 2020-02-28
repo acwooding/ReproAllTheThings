@@ -45,5 +45,17 @@
         }
       ]
     ]
+  },
+  {
+    "input_dataset": "beer_review_all",
+    "output_dataset": "beer_by_reviewers",
+    "transformations": [
+      [
+        "groupby_beer_to_reviewers",
+        {
+          "positive_threshold": 4.5
+        }
+      ]
+    ]
   }
 ]
