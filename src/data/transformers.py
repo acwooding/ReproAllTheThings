@@ -37,6 +37,8 @@ def available_transformers(keys_only=True):
     groupby_style_to_reviewers  groupby_style_to_reviewers
     sklearn_transform           sklearn_transform
     groupby_beer_to_reviewers   groupby_beer_to_reviewers
+    groupby_breweries           groupby_breweries
+    groupby_breweries_by_style  groupby_breweries_by_style
     ============                ====================================
 
     Parameters
@@ -47,6 +49,8 @@ def available_transformers(keys_only=True):
     _TRANSFORMERS = {
         "add_srm_to_reviews": add_srm_to_reviews,
         "groupby_beer_to_reviewers": groupby_beer_to_reviewers,
+        "groupby_breweries": groupby_breweries,
+        "groupby_breweries_by_style": groupby_breweries_by_style,
         "groupby_style_to_reviewers": groupby_style_to_reviewers,
         "index_to_date_time": index_to_date_time,
         "pivot": pivot,
@@ -292,18 +296,18 @@ def groupby_style_to_reviewers(review_dset):
     return ds
 
 
-def groupby_beer_to_reviewers(review_dset, positive_threshold=4.5):
+def groupby_beer_to_reviewers(review_dset, positive_threshold=None):
     """
     Turn our reviews data frame into a frame with one row per beer instead of one row per review.
 
-    We will also restrict to positive reviews only (by default > 4.5)
+    We will also restrict to positive reviews only if a positive threshold value is set.
 
     Parameters
     ----------
     review_dset: Dataset
         Dataset containing the beer reviews data
 
-    positive_threshold: Default: 4.5
+    positive_threshold: Default: None
         Number between 0 and 5 representing the threshold for a postive review (aka. a positive
         review is defined as a review with a value greater than positive_threshold).
 
@@ -312,10 +316,13 @@ def groupby_beer_to_reviewers(review_dset, positive_threshold=4.5):
     beer dataset with a dataframe representing beer by positive reviewers
     """
     reviews = review_dset.data
-    pos_reviews = reviews[reviews.review_overall>=positive_threshold]
+    if positive_threshold is not None:
+        pos_reviews = reviews[reviews.review_overall>=positive_threshold]
+    else:
+        pos_reviews = reviews
 
     unique_join = lambda x: custom_join(x.unique(), " ")
-    beer = reviews.groupby('beer_beerid').agg({
+    beer = pos_reviews.groupby('beer_beerid').agg({
         'beer_name':'first',
         'brewery_name':'first',
         'beer_style':'first',
@@ -332,5 +339,87 @@ def groupby_beer_to_reviewers(review_dset, positive_threshold=4.5):
     review_aroma review_appearance review_overall review_palate review_taste
     review_profilename_list review_profilename_len""".split()
 
-    ds = Dataset(dataset_name="beer_positive_reviewers", metadata=review_dset.metadata, data=beer)
+    ds = Dataset(dataset_name="beer_reviewers", metadata=review_dset.metadata, data=beer)
+    return ds
+
+def groupby_breweries(review_dset):
+    """
+    Transform to one row per brewery instead of one row per reviews.
+
+    It turns out there are a number of breweries with multiple brewery_ids for the same brewery_name.
+    Upon examining thse breweries they are inevitably chains of brew pubs with multiple locations.  We
+    feel that they should be treated as the same brewery.  Thus we chose to group by brewery_name
+    instead of brewery_id.
+
+    Parameters
+    ----------
+    review_dset: Dataset
+        Dataset containing the beer reviews data
+
+    Returns
+    -------
+    brewery dataset with a dataframe representing breweries by reviewers
+    """
+    reviews = review_dset.data
+    unique_join = lambda x: custom_join(x.unique(), " ")
+    breweries = reviews.groupby('brewery_name').agg({
+        'beer_name':lambda x: x.mode(),
+        'beer_style':lambda x: x.mode(),
+        'beer_abv':'mean',
+        'review_aroma':'mean',
+        'review_appearance':'mean',
+        'review_overall':'mean',
+        'review_palate':'mean',
+        'review_taste':'mean',
+        'review_profilename':[unique_join, len],
+        'brewery_id':lambda x: len(x.unique()),
+    }).reset_index()
+
+    breweries.columns = """brewery_name beer_name beer_style beer_abv
+    review_aroma review_appearance review_overall review_palate review_taste
+    review_profilename_list num_reviewers num_ids""".split()
+    ds = Dataset(dataset_name="breweries_reviewers", metadata=review_dset.metadata, data=breweries)
+    return ds
+
+
+def groupby_breweries_by_style(review_dset):
+    """
+    Transform to one row per brewery instead of one row per reviews.
+
+    It turns out there are a number of breweries with multiple brewery_ids for the same brewery_name.
+    Upon examining thse breweries they are inevitably chains of brew pubs with multiple locations.  We
+    feel that they should be treated as the same brewery.  Thus we chose to group by brewery_name
+    instead of brewery_id.
+
+    We will build a list for each brewery with one instance of the beer style for each review. This will
+    allow us differentiate breweries who claim to make every style of beer but who from the perspective
+    of most reviewers only make two styles.
+    Parameters
+    ----------
+    review_dset: Dataset
+        Dataset containing the beer reviews data
+
+    Returns
+    -------
+    brewery dataset with a dataframe representing breweries by most common beer style
+    """
+    reviews = review_dset.data
+    breweries = reviews.groupby('brewery_name').agg({
+        'beer_name':lambda x: x.mode().iloc[0],
+        'beer_style':[lambda x:custom_join(x,","),len, lambda x:x.mode().iloc[0]],
+        'beer_abv':'mean',
+        'review_aroma':'mean',
+        'review_appearance':'mean',
+        'review_overall':'mean',
+        'review_palate':'mean',
+        'review_taste':'mean',
+        'review_profilename':len,
+        'brewery_id':lambda x: len(x.unique()),
+    }).reset_index()
+
+    breweries.columns = """brewery_name beer_name beer_style num_beer_style favorite_style beer_abv
+    review_aroma review_appearance review_overall review_palate review_taste
+    num_reviewers num_ids""".split()
+
+    ds = Dataset(dataset_name="breweries_by_style", metadata=review_dset.metadata, data=breweries)
     return ds

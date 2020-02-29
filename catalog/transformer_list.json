@@ -30,23 +30,6 @@
     ]
   },
   {
-    "input_dataset": "beer_style_reviewers",
-    "output_dataset": "style_by_authors",
-    "transformations": [
-      [
-        "sklearn_transform",
-        {
-          "subselect_column": "review_profilename_list",
-          "transformer_name": "CountVectorizer",
-          "transformer_opts": {
-            "binary": true,
-            "min_df": 10
-          }
-        }
-      ]
-    ]
-  },
-  {
     "input_dataset": "beer_review_all",
     "output_dataset": "beer_by_reviewers",
     "transformations": [
@@ -55,6 +38,38 @@
         {
           "positive_threshold": 4.5
         }
+      ]
+    ]
+  },
+  {
+    "input_dataset": "beer_review_all",
+    "output_dataset": "beer_by_reviewers_simple",
+    "transformations": [
+      [
+        "groupby_beer_to_reviewers",
+        {
+          "positive_threshold": null
+        }
+      ]
+    ]
+  },
+  {
+    "input_dataset": "beer_review_all",
+    "output_dataset": "breweries_by_reviewers",
+    "transformations": [
+      [
+        "groupby_breweries",
+        {}
+      ]
+    ]
+  },
+  {
+    "input_dataset": "beer_review_all",
+    "output_dataset": "breweries_by_style",
+    "transformations": [
+      [
+        "groupby_breweries_by_style",
+        {}
       ]
     ]
   }
