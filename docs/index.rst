@@ -1,9 +1,9 @@
-.. reproallthethings documentation master file, created by
+.. ReproAllTheThings documentation master file, created by
    sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-reproallthethings documentation!
+ReproAllTheThings documentation!
 ==============================================
 
 Contents:
