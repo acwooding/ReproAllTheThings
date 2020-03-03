@@ -1,5 +1,6 @@
-reproallthethings
+ReproAllTheThings
 ==============================
+_Author: John Healy, Amy Wooding_
 
 Reproducing EmbedAllTheThings by jc-healy and making it reproducible via easydata.
 

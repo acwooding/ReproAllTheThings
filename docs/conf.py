@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# reproallthethings documentation build configuration file, created by
+# ReproAllTheThings documentation build configuration file, created by
 # sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -41,7 +41,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'reproallthethings'
+project = u'ReproAllTheThings'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -185,7 +185,7 @@ latex_elements = {
 latex_documents = [
     ('index',
      'reproallthethings.tex',
-     u'reproallthethings Documentation',
+     u'ReproAllTheThings Documentation',
      u"John Healy, Amy Wooding", 'manual'),
 ]
 
@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'reproallthethings', u'reproallthethings Documentation',
+    ('index', 'reproallthethings', u'ReproAllTheThings Documentation',
      [u"John Healy, Amy Wooding"], 1)
 ]
 
@@ -229,8 +229,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'reproallthethings', u'reproallthethings Documentation',
-     u"John Healy, Amy Wooding", 'reproallthethings',
+    ('index', 'reproallthethings', u'ReproAllTheThings Documentation',
+     u"John Healy, Amy Wooding", 'ReproAllTheThings',
      'Reproducing EmbedAllTheThings by jc-healy and making it reproducible via easydata.', 'Miscellaneous'),
 ]
 
