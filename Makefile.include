@@ -1,5 +1,5 @@
 ARCH := $(shell arch)
-CONDA_EXE ?= /opt/software/anaconda3/bin/anaconda
+CONDA_EXE ?= ~/anaconda3/bin/conda
 MODULE_NAME := src
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME := reproallthethings
