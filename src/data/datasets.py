@@ -418,7 +418,7 @@ class DataSource(object):
         logger.warning("file_list is deprecated. Use file_dict instead")
         return list(self.file_dict.values())
 
-    def add_metadata(self, filename=None, contents=None, metadata_path=None, kind='DESCR', force=False):
+    def add_metadata(self, filename=None, contents=None, metadata_path=None, kind='DESCR', unpack_action='copy', force=False):
         """Add metadata to a DataSource
 
         filename: create metadata entry from contents of this file
@@ -444,14 +444,14 @@ class DataSource(object):
 
         if filename is not None:
             filelist_entry = {
-                'fetch_action': 'metadata',
+                'fetch_action': 'copy',
                 'file_name': str(filename),
                 'name': kind,
             }
         elif contents is not None:
             filelist_entry = {
                 'contents': contents,
-                'fetch_action': 'metadata',
+                'fetch_action': 'create',
                 'file_name': filename_map[kind],
                 'name': kind,
             }
@@ -665,7 +665,7 @@ class DataSource(object):
             for filename, item in self.file_dict.items():
                 raw_data_file = paths['raw_data_path'] / filename
                 if not raw_data_file.exists():
-                    logger.warning("{raw_data_file.name} missing. Invalidating fetch cache")
+                    logger.warning(f"{raw_data_file.name} missing. Invalidating fetch cache")
                     self.fetched_ = False
                     break
                 raw_file_hash = hash_file(raw_data_file, algorithm=item['hash_type']).hexdigest()

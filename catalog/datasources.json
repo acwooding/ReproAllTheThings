@@ -15,6 +15,14 @@
         "message": "\nPlease download the beerreviews dataset from the Kaggle webpage at:\n   https://www.kaggle.com/rdoume/beerreviews\nThis will require you creating a Kaggle account, and consenting to their terms of service.\n",
         "name": null,
         "unpack_action": "copy"
+      },
+      {
+        "contents": "\nThis can be downloaded from that Kaggle webpage at: https://www.kaggle.com/rdoume/beerreviews It requires Kaggle login.",
+        "fetch_action": "create",
+        "file_name": "beer_review.readme",
+        "hash_value": "e7b432ded25e12d616ef34e520e20e212be1a315",
+        "name": "DESCR",
+        "unpack_action": "copy"
       }
     ]
   },
