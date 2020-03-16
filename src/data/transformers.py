@@ -5,7 +5,7 @@ import os
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from .datasets import Dataset
-from ..logging import logger
+from ..log import logger
 from ..utils import custom_join
 
 __all__ = [
