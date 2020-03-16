@@ -9,6 +9,7 @@ dependencies:
     - datashader
     - holoviews
     - umap-learn>=0.4.0rc1
+    - enstop
   - setuptools
   - wheel
   - git>=2.5  # for git worktree template updating
@@ -26,4 +27,6 @@ dependencies:
   - python=3.8
   - seaborn
   - bokeh
+  - nltk
+  - numba
 
