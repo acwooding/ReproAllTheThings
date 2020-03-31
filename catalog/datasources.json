@@ -1,27 +1,28 @@
 {
   "beer_review": {
-    "dataset_dir": "/home/ava00125/src/devel/reproallthethings/data/raw",
+    "dataset_dir": "/home/ava00088/TIMC/sandbox/ava00088/devel/reproallthethings/data/raw",
     "load_function_args": [],
-    "load_function_kwargs": {
-      "raw_dir": "/home/ava00125/src/devel/reproallthethings/data/raw",
-      "unpack_dir": "/home/ava00125/src/devel/reproallthethings/data/interim"
-    },
-    "load_function_module": "src.data.localdata",
-    "load_function_name": "process_beer_review",
+    "load_function_kwargs": {},
+    "load_function_module": "src.data.utils",
+    "load_function_name": "process_dataset_default",
     "name": "beer_review",
     "url_list": [
       {
+        "fetch_action": "message",
         "file_name": "beerreviews.zip",
         "hash_type": "sha1",
         "hash_value": "0230ef8cbfd761597cd44fbb3c344efef6242419",
+        "message": "\nPlease download the beerreviews dataset from the Kaggle webpage at:\n   https://www.kaggle.com/rdoume/beerreviews\nThis will require you creating a Kaggle account, and consenting to their terms of service.\n",
         "name": null,
-        "source_file": "/home/ava00125/Downloads/beerreviews.zip"
+        "unpack_action": "copy"
       },
       {
         "contents": "\nThis can be downloaded from that Kaggle webpage at: https://www.kaggle.com/rdoume/beerreviews It requires Kaggle login.",
+        "fetch_action": "create",
         "file_name": "beer_review.readme",
         "hash_value": "e7b432ded25e12d616ef34e520e20e212be1a315",
-        "name": "DESCR"
+        "name": "DESCR",
+        "unpack_action": "copy"
       }
     ]
   },
