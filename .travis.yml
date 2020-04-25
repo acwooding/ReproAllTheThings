@@ -21,9 +21,8 @@ install:
   - make update_environment
 
 script:
-  - mkdir for_test
-  - cd for_test
-  - pytest -v
+  - cd src
+  - pytest --doctest-modules --doctest-continue-on-failure --verbose --cov --junitxml=test-reports/junit.xml
 
 #after_success:
 #  - codecov
