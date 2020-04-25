@@ -1,5 +1,7 @@
 ARCH := $(shell arch)
-CONDA_EXE ?= /Users/amywooding/miniconda3/condabin/conda
+
+CONDA_EXE ?= ~/miniconda3/condabin/conda
+
 MODULE_NAME := src
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME := reproallthethings
