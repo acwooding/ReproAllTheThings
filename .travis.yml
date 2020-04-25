@@ -17,14 +17,14 @@ install:
   - export PATH=$MINICONDA_PATH/condabin:$PATH
   - conda update --yes conda
   # create the testing environment
-  #- make create_environment
+  - make create_environment
   - conda init bash
-  - conda init --help
-  - echo "$SHELL"
-  #- conda activate reproallthethings
-  #- make update_environment
+  - conda activate reproallthethings
+  - make update_environment
 
 script:
+  - pwd
+  - ls -la
   - cd src
   - pytest --doctest-modules --doctest-continue-on-failure --verbose --cov --junitxml=test-reports/junit.xml
 
