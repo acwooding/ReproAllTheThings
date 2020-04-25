@@ -19,7 +19,7 @@ install:
   - which conda
   # create the testing environment
   - make create_environment
-  - conda activate reproallthethings
+  - source activate reproallthethings
   - make update_environment
 
 script:
