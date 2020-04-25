@@ -19,14 +19,14 @@ install:
   # create the testing environment
   - make create_environment
   - conda init bash
-
-script:
+  - . ~/.bashrc
   - conda activate reproallthethings
   - make update_environment
-  - pwd
-  - ls -la
+
+script:
   - cd src
-  #- conda activate reproallthethings
+  - pwd
+  - conda activate reproallthethings
   - pytest --doctest-modules --doctest-continue-on-failure --verbose --cov --junitxml=test-reports/junit.xml
 
 after_success:
