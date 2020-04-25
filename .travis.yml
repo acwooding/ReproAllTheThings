@@ -16,9 +16,10 @@ install:
   - chmod +x $MINICONDA_PATH
   - export PATH=$MINICONDA_PATH/condabin:$PATH
   - conda update --yes conda
+  - conda init bash
   # create the testing environment
   - make create_environment
-  - source activate reproallthethings
+  - conda activate reproallthethings
   - make update_environment
 
 script:
@@ -26,4 +27,4 @@ script:
   - pytest --doctest-modules --doctest-continue-on-failure --verbose --cov --junitxml=test-reports/junit.xml
 
 #after_success:
-#  - codecov
+#  - coveralls
