@@ -16,7 +16,6 @@ install:
   - chmod +x $MINICONDA_PATH
   - export PATH=$MINICONDA_PATH/condabin:$PATH
   - conda update --yes conda
-  - which conda
   # create the testing environment
   - make create_environment
   - source activate reproallthethings
