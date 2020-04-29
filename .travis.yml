@@ -25,9 +25,7 @@ install:
 
 script:
   - cd src
-  - conda activate reproallthethings
-#  - pytest --doctest-modules --doctest-continue-on-failure --verbose --cov --junitxml=test-reports/junit.xml
-  - coverage run -m pytest --doctest-modules --doctest-continue-on-failure --verbose --junitxml=test-reports/junit.xml
+  - coverage run -m pytest --doctest-modules --doctest-continue-on-failure --verbose
 
 after_success:
   - coveralls
