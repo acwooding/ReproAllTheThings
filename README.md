@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/acwooding/ReproAllTheThings.svg?branch=master)](https://travis-ci.org/acwooding/ReproAllTheThings)
+
+[![Coverage Status](https://coveralls.io/repos/github/acwooding/ReproAllTheThings/badge.svg)](https://coveralls.io/github/acwooding/ReproAllTheThings)
+
 ReproAllTheThings
 ==============================
 _Author: John Healy, Amy Wooding_

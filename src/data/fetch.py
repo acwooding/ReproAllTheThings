@@ -245,7 +245,7 @@ def fetch_file(url=None, contents=None,
 
     # infer filename from url or src_path if needed
     if file_name is None:
-        file_name = infer_filename(self, url=url, source_file=source_file)
+        file_name = infer_filename(url=url, source_file=source_file)
 
     if dst_dir is None:
         dst_dir = paths['raw_data_path']
