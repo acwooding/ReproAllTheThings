@@ -516,7 +516,6 @@ class DataSource(object):
         self.file_dict[file_name] = fetch_dict
         self.fetched_ = False
 
-
     def add_file(self, source_file=None, *, hash_type='sha1', hash_value=None,
                  name=None, file_name=None, unpack_action=None,
                  force=False):

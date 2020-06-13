@@ -1,7 +1,7 @@
 {
     "_template": "cookiecutter-easydata",
     "author_name": "John Healy, Amy Wooding",
-    "conda_path": "~/anaconda3/bin/conda",
+    "conda_path": "~/miniconda3/bin/conda",
     "description": "Reproducing EmbedAllTheThings by jc-healy and making it reproducible via easydata.",
     "module_name": "src",
     "open_source_license": "MIT",
