@@ -578,7 +578,7 @@ class DataSource(object):
         self.fetched_ = False
 
     def add_url(self, url=None, *, hash_type='sha1', hash_value=None,
-                name=None, file_name=None, force=False):
+                name=None, file_name=None, force=False, unpack_action=None):
         """
         Add a URL to the file list
 
@@ -658,7 +658,15 @@ class DataSource(object):
         return dset_opts
 
     def fetch(self, fetch_path=None, force=False):
-        """Fetch to raw_data_dir and check hashes
+        """Fetch files in the `file_dict` to `raw_data_dir` and check hashes.
+
+        Parameters
+        ----------
+        fetch_path: None or string
+            By default, assumes dataset_dir
+
+        force: Boolean
+            If True, ignore the cache and re-download the fetch each time
         """
         if self.fetched_ and force is False:
             # validate the downloaded files:
@@ -686,14 +694,15 @@ class DataSource(object):
         self.fetched_files_ = []
         for key, item in self.file_dict.items():
             status, result, hash_value = fetch_file(**item)
+            logger.debug(f"Fetching {key}: status:{status}")
             if status:  # True (cached) or HTTP Code (successful download)
                 item['hash_value'] = hash_value
                 item['file_name'] = result.name
                 self.fetched_files_.append(result)
             else:
-                if item.get('url', False):
-                    logger.error(f"fetch of {item['url']} returned: {result}")
-                    break
+                if item.get('fetch_action', False) != 'message':
+                    logger.error(f"fetch of {key} returned: {result}")
+                break
         else:
             self.fetched_ = True
 
