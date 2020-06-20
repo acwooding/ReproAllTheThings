@@ -4,28 +4,24 @@
     "output_dataset": "beer_review_all"
   },
   {
-    "datasource_name": "beer_styles_srm",
-    "output_dataset": "beer_styles_srm_all"
-  },
-  {
-    "input_dataset": "beer_review_all",
-    "output_dataset": "beer_style",
-    "transformations": [
-      [
-        "add_srm_to_reviews",
-        {
-          "srm_dset_name": "beer_styles_srm_all"
-        }
-      ]
-    ]
-  },
-  {
     "input_dataset": "beer_review_all",
     "output_dataset": "beer_style_reviewers",
     "transformations": [
       [
         "groupby_style_to_reviewers",
         {}
+      ]
+    ]
+  },
+  {
+    "input_dataset": "beer_review_all",
+    "output_dataset": "beer_by_reviewers_simple",
+    "transformations": [
+      [
+        "groupby_beer_to_reviewers",
+        {
+          "positive_threshold": null
+        }
       ]
     ]
   }
