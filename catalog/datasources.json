@@ -12,12 +12,11 @@
         "file_name": "beerreviews.zip",
         "hash_type": "sha1",
         "hash_value": "0230ef8cbfd761597cd44fbb3c344efef6242419",
-        "message": "\nPlease download the beerreviews dataset from the Kaggle webpage at:\n   https://www.kaggle.com/rdoume/beerreviews\nThis will require you creating a Kaggle account, and consenting to their terms of service.\n",
-        "name": null,
-        "unpack_action": "copy"
+        "message": "\nPlease download beerreviews.zip from the Kaggle webpage at:\n   https://www.kaggle.com/rdoume/beerreviews\nIts SHA-1 Hash should be: 0230ef8cbfd761597cd44fbb3c344efef6242419 \n\nThis will require you to create a Kaggle account, and consent to their terms of service.\n",
+        "name": null
       },
       {
-        "contents": "\nThis can be downloaded from that Kaggle webpage at: https://www.kaggle.com/rdoume/beerreviews It requires Kaggle login.",
+        "contents": "\nPlease download beerreviews.zip from the Kaggle webpage at:\n   https://www.kaggle.com/rdoume/beerreviews\nIts SHA-1 Hash should be: 0230ef8cbfd761597cd44fbb3c344efef6242419 \n\nThis will require you to create a Kaggle account, and consent to their terms of service.\n",
         "fetch_action": "create",
         "file_name": "beer_review.readme",
         "hash_value": "e7b432ded25e12d616ef34e520e20e212be1a315",
@@ -27,41 +26,46 @@
     ]
   },
   "beer_styles_srm": {
-    "dataset_dir": "/home/ava00125/src/devel/reproallthethings/data/raw",
+    "dataset_dir": "/Users/amywooding/easydata/data/raw",
     "load_function_args": [],
     "load_function_kwargs": {
-      "source_dir": "/home/ava00125/src/devel/reproallthethings/data/raw"
+      "source_dir": "/Users/amywooding/easydata/data/raw"
     },
     "load_function_module": "src.data.localdata",
     "load_function_name": "process_srm_data",
     "name": "beer_styles_srm",
     "url_list": [
       {
+        "fetch_action": "message",
         "file_name": "beer_styles.csv",
         "hash_type": "sha1",
         "hash_value": "42f925bd5ae56b684207941da51a771031a32c57",
-        "name": null,
-        "source_file": "/home/ava00125/src/devel/EmbedAllTheThings/beer_styles.csv"
+        "message": "Find these files at github.com/jc-healy/EmbedAllTheThings",
+        "name": null
       },
       {
+        "fetch_action": "message",
         "file_name": "srm2rgb.csv",
         "hash_type": "sha1",
         "hash_value": "de1edb12a5cd72fe08213388402a988d16e60436",
-        "name": null,
-        "source_file": "/home/ava00125/src/devel/EmbedAllTheThings/srm2rgb.csv"
+        "message": "Find these files at github.com/jc-healy/EmbedAllTheThings",
+        "name": null
       },
       {
+        "fetch_action": "message",
         "file_name": "beer_review_kaggle2srm_schema.csv",
         "hash_type": "sha1",
         "hash_value": "eba2b28dc7b2e95bf1a5c180db3a662dcd8c20d1",
-        "name": null,
-        "source_file": "/home/ava00125/src/devel/EmbedAllTheThings/beer_review_kaggle2srm_schema.csv"
+        "message": "Find these files at github.com/jc-healy/EmbedAllTheThings",
+        "name": null
       },
       {
         "contents": "\nThis data is from https://github.com/jc-healy/EmbedAllTheThings. No previous source or license is available. No license on the repo either.",
+        "fetch_action": "create",
         "file_name": "beer_styles_srm.readme",
         "hash_value": "88cc09551d54d7740c424d49f04274c5386bfce3",
-        "name": "DESCR"
+        "name": "DESCR",
+        "unpack_action": "copy"
       }
     ]
   }
