@@ -275,7 +275,6 @@ def groupby_style_to_reviewers(review_dset):
     beer style dataset with a dataframe representing beer style by reviewers
     """
     reviews = review_dset.data
-    unique_join = lambda x: custom_join(x.unique(), " ")
     beer_style = reviews.groupby('beer_style').agg({
         'beer_name':lambda x: x.mode(),
         'brewery_name':lambda x: x.mode(),
@@ -285,7 +284,7 @@ def groupby_style_to_reviewers(review_dset):
         'review_overall':'mean',
         'review_palate':'mean',
         'review_taste':'mean',
-        'review_profilename':[unique_join, len],
+        'review_profilename': [lambda x: list(x.unique()), lambda x: len(x.unique())],
         'brewery_id':lambda x: len(x.unique()),
     }).reset_index()
 
