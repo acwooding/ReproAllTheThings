@@ -407,7 +407,7 @@ def groupby_breweries_by_style(review_dset):
     reviews = review_dset.data
     breweries = reviews.groupby('brewery_name').agg({
         'beer_name':lambda x: x.mode().iloc[0],
-        'beer_style':[lambda x:custom_join(x,","),len, lambda x:x.mode().iloc[0]],
+        'beer_style':[list,len, lambda x:x.mode().iloc[0]],
         'beer_abv':'mean',
         'review_aroma':'mean',
         'review_appearance':'mean',
@@ -421,6 +421,6 @@ def groupby_breweries_by_style(review_dset):
     breweries.columns = """brewery_name beer_name beer_style num_beer_style favorite_style beer_abv
     review_aroma review_appearance review_overall review_palate review_taste
     num_reviewers num_ids""".split()
-
+    breweries.beer_style = cast_tokens_to_strings(breweries.beer_style)
     ds = Dataset(dataset_name="breweries_by_style", metadata=review_dset.metadata, data=breweries)
     return ds
