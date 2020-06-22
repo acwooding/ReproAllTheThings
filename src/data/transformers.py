@@ -362,7 +362,6 @@ def groupby_breweries(review_dset):
     brewery dataset with a dataframe representing breweries by reviewers
     """
     reviews = review_dset.data
-    unique_join = lambda x: custom_join(x.unique(), " ")
     breweries = reviews.groupby('brewery_name').agg({
         'beer_name':lambda x: x.mode(),
         'beer_style':lambda x: x.mode(),
@@ -372,13 +371,14 @@ def groupby_breweries(review_dset):
         'review_overall':'mean',
         'review_palate':'mean',
         'review_taste':'mean',
-        'review_profilename':[unique_join, len],
+        'review_profilename': [lambda x: list(x.unique()), lambda x: len(x.unique())],
         'brewery_id':lambda x: len(x.unique()),
     }).reset_index()
 
     breweries.columns = """brewery_name beer_name beer_style beer_abv
     review_aroma review_appearance review_overall review_palate review_taste
     review_profilename_list num_reviewers num_ids""".split()
+    breweries.review_profilename_list = cast_tokens_to_strings(breweries.review_profilename_list)
     ds = Dataset(dataset_name="breweries_reviewers", metadata=review_dset.metadata, data=breweries)
     return ds
 

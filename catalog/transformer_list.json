@@ -36,5 +36,15 @@
         }
       ]
     ]
+  },
+  {
+    "input_dataset": "beer_review_all",
+    "output_dataset": "breweries_by_reviewers",
+    "transformations": [
+      [
+        "groupby_breweries",
+        {}
+      ]
+    ]
   }
 ]
