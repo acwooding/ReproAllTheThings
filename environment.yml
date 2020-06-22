@@ -11,6 +11,8 @@ dependencies:
     - umap-learn>=0.4.0rc1
     - enstop
     - coveralls
+    - git+https://github.com/TutteInstitute/vectorizers.git
+    - git+https://github.com/TutteInstitute/TextMAP.git
   - setuptools
   - wheel
   - git>=2.5  # for git worktree template updating
