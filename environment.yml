@@ -1,4 +1,4 @@
-name: embedallthethings2
+name: reproallthethings
 dependencies:
   - pip
   - pip:
@@ -21,7 +21,7 @@ dependencies:
   - coverage
   - pytest-cov
   - jupyter
-  - scikit-learn
+  - scikit-learn>=0.23
   - joblib
   - nb_conda_kernels<2.2.0  # nb_conda_kernels issue #158
   - pandas
