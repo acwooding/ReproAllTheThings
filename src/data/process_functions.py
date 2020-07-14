@@ -40,7 +40,7 @@ def process_wine_reviews(*, kind='130k', extract_dir='wine_reviews',
         unpack_dir = paths['interim_data_path']
     else:
         unpack_dir = pathlib.Path(unpack_dir)
-    data_dir = unpack_dir / extract_dir
+    data_dir = unpack_dir / f"{extract_dir}_{kind}"
     if kind == '130k':
         data = pd.read_csv(data_dir/"winemag-data-130k-v2.csv", index_col=0)
     elif kind == '150k':
