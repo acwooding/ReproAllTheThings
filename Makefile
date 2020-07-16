@@ -30,6 +30,15 @@ unfinished:
 ## convert raw datasets into fully processed datasets
 data: transform_data
 
+.PHONY: data
+## convert raw datasets into fully processed datasets
+data: transform_data
+
+.PHONY: docs
+## create sphinx-generated html docs
+docs:
+	cd sphinx && make BUILDDIR="../docs" html
+
 .PHONY: sources
 ## Fetch, Unpack, and Process raw DataSources
 sources: process_sources
