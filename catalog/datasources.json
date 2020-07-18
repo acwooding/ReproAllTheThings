@@ -13,7 +13,7 @@
         "file_name": "wine_reviews.zip",
         "hash_type": "sha1",
         "hash_value": "sha1:844f943eda69e7a472a8d6752d71d436f6caefc8",
-        "message": "\nPlease download wine_reviews.zip from the Kaggle webpage at:\n   https://www.kaggle.com/zynicide/wine-reviews\nIts SHA-1 Hash should be: sha1:844f943eda69e7a472a8d6752d71d436f6caefc8 \n\nThis will require you to create a Kaggle account, and consent to their terms of service.\n",
+        "message": "\nPlease download wine_reviews.zip from the Kaggle webpage at:\n   https://www.kaggle.com/zynicide/wine-reviews\n   \nWhen you select \u201cDownload\u201d from Kaggle, it will download all three files together in a .zip file. Name this file wine_reviews.zip and put it in your data/raw directory.\n\nIts SHA-1 Hash should be: sha1:844f943eda69e7a472a8d6752d71d436f6caefc8 \n\nThis will require you to create a Kaggle account, and consent to their terms of service.\n",
         "name": null
       },
       {
