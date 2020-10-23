@@ -18,7 +18,7 @@ endif
 create_environment: environment.$(ARCH).lock.yml
 ifeq (conda,$(VIRTUALENV))
 	@touch environment.yml
-        @echo
+	@echo
 	@echo "New conda env created. Activate with:"
 	@echo ">>> conda activate $(PROJECT_NAME)"
 	@echo ">>> make update_environment"
