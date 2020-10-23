@@ -6,10 +6,16 @@ ReproAllTheThings
 ==============================
 _Author: John Healy, Amy Wooding_
 
-Reproducing EmbedAllTheThings by jc-healy and making it reproducible via easydata.
+Reproducing the [EmbedAllTheThings] notebooks by [jc-healy] and making them reproducible via the
+[cookiecutter-easydata][Easydata] framework.
 
-This repo is build on the cookiecutter-easydata template and workflow for making it easy to share your work with others and
-to build on the work of others. This includes:
+[EmbedAllTheThings]: https://github.com/jc-healy/EmbedAllTheThings
+[cookiecutter-easydata]: https://github.com/hackalog/cookiecutter-easydata
+[jc-healy]: https://github.com/jc-healy
+
+This git repo is build using the [cookiecutter-easydata] template and
+workflow for making it easy to share your work with others and to
+build on the work of others. This includes:
 
 * managing conda environments in a consistent and reproducible way,
 * built in dataset management (including tracking of licenses),
@@ -18,9 +24,9 @@ to build on the work of others. This includes:
 
 REQUIREMENTS
 ------------
-* Make
+* GNU make
 * conda >= 4.8 (via Anaconda or Miniconda)
-* Git
+* git >= 2.5
 
 GETTING STARTED
 ---------------
