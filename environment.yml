@@ -1,4 +1,6 @@
 name: reproallthethings
+channels:
+  - defaults
 dependencies:
   - pip
   - pip:
@@ -13,22 +15,27 @@ dependencies:
     - coveralls
     - git+https://github.com/TutteInstitute/vectorizers.git
     - git+https://github.com/TutteInstitute/TextMAP.git
+    - gdown
   - setuptools
   - wheel
   - git>=2.5  # for git worktree template updating
   - sphinx
+  - bokeh
   - click
+  - colorcet
   - coverage
-  - pytest-cov
+  - coveralls
+  - matplotlib
   - jupyter
-  - scikit-learn>=0.23
+  - scikit-learn
+  - scipy
   - joblib
-  - nb_conda_kernels<2.2.0  # nb_conda_kernels issue #158
+  - nb_conda_kernels#<2.2.0  # nb_conda_kernels issue #158
   - pandas
   - requests
   - pathlib
-  - python=3.7
   - seaborn
-  - bokeh
   - nltk
   - numba
+  - fsspec
+  - python=3.7

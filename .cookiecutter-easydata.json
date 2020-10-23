@@ -7,6 +7,5 @@
     "open_source_license": "MIT",
     "project_name": "reproallthethings",
     "python_version": "3.7",
-    "repo_name": "reproallthethings",
-    "virtualenv": "conda"
+    "repo_name": "reproallthethings"
 }
