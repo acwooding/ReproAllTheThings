@@ -7,6 +7,10 @@ import tarfile
 import zipfile
 import zlib
 import requests
+import joblib
+import gdown
+
+from tqdm.auto import tqdm
 
 from .. import paths
 from ..log import logger
@@ -18,6 +22,7 @@ __all__ = [
     'fetch_text_file',
     'get_dataset_filename',
     'hash_file',
+    'hash_object',
     'infer_filename',
     'unpack',
 ]
@@ -25,7 +30,7 @@ __all__ = [
 _HASH_FUNCTION_MAP = {
     'md5': hashlib.md5,
     'sha1': hashlib.sha1,
-    'sha256': hashlib.sha256,
+    'size': os.path.getsize,
 }
 
 def available_hashes():
@@ -44,30 +49,105 @@ def available_hashes():
     ============     ====================================
     md5              hashlib.md5
     sha1             hashlib.sha1
-    sha256           hashlib.sha256
+    size             os.path.getsize
     ============     ====================================
 
     >>> list(available_hashes().keys())
-    ['md5', 'sha1', 'sha256']
+    ['md5', 'sha1', 'size']
     """
     return _HASH_FUNCTION_MAP
+
+def hash_object(obj, hash_type="sha1"):
+    '''compute the hash of a python object
+
+    Parameters
+    ----------
+    hash_type: {'md5', 'sha1', 'size'}
+        hash function to use.
+        Must be in `available_hashes`
+
+    Returns
+    -------
+    A string: f"{hash_type}:{hash_value}"
+    '''
+    data_hash = joblib.hash(obj, hash_name=hash_type).hexdigest()
+    return f"{hash_type}:{data_hash}"
 
 def hash_file(fname, algorithm="sha1", block_size=4096):
     '''Compute the hash of an on-disk file
 
-    algorithm: {'md5', sha1', 'sha256'}
-        hash algorithm to use
+    hash_type: {'md5', 'sha1', 'size'}
+        hash function to use.
+        Must be in `available_hashes`
     block_size:
         size of chunks to read when hashing
 
-    Returns:
-        Hashlib object
+    Returns
+    -------
+    String: f"{hash_type}:{hash_value}"
     '''
+    if algorithm == 'size':
+        hashval = _HASH_FUNCTION_MAP[algorithm]
+        return f"{algorithm}:{hashval(fname)}"
+
     hashval = _HASH_FUNCTION_MAP[algorithm]()
     with open(fname, "rb") as fd:
         for chunk in iter(lambda: fd.read(block_size), b""):
             hashval.update(chunk)
-    return hashval
+    return f"{algorithm}:{hashval.hexdigest()}"
+
+def tqdm_download(url, url_options=None, filename=None,
+                  download_path=None,chunk_size=1024):
+    """Download a URL via requests, displaying a tqdm status bar
+
+    Parameters
+    ----------
+    url:
+        URL to download
+    url_options:
+        Options passed to requests.request() for download
+    filename:
+        filename to save. If omitted, it's inferred from the URL
+    download_path: path, default paths['raw_data_path']
+        Inferred filename is relative to this path
+    chunk_size:
+        block size for writes
+
+    Raises
+    ------
+    HTTPError if download fails
+
+    Returns
+    -------
+    filename of written file
+    """
+    if url_options is None:
+        url_options = {}
+    if download_path is None:
+        download_path = paths['raw_data_path']
+    else:
+        download_path = pathlib.Path(download_path)
+    if filename is None:
+        fn = url.split("/")[-1]
+        logger.debug(f"filename not specified. Inferring '{fn}' from url")
+        filename = download_path / fn
+    else:
+        filename = pathlib.Path(filename)
+    resp = requests.get(url, stream=True, **url_options)
+    total = int(resp.headers.get('content-length', 0))
+    with open(filename, 'wb') as file, tqdm(
+            desc=filename.name,
+            total=total,
+            unit='iB',
+            unit_scale=True,
+            unit_divisor=1024,
+    ) as bar:
+        for data in resp.iter_content(chunk_size=chunk_size):
+            size = file.write(data)
+            bar.update(size)
+    resp.raise_for_status()
+
+    return filename
 
 def fetch_files(force=False, dst_dir=None, **kwargs):
     '''
@@ -169,10 +249,10 @@ def infer_filename(url=None, file_name=None, source_file=None, **kwargs):
     return file_name
 
 
-def fetch_file(url=None, contents=None,
+def fetch_file(url=None, url_options=None, contents=None,
                file_name=None, dst_dir=None,
                force=False, source_file=None,
-               hash_type="sha1", hash_value=None,
+               hash_type=None, hash_value=None,
                fetch_action=None, message=None,
                **kwargs):
     '''Fetch the raw files needed by a DataSource.
@@ -202,17 +282,21 @@ def fetch_file(url=None, contents=None,
         contents of file to be created (if fetch_action == 'create')
     url:
         url to be downloaded
-    hash_type:
-        Type of hash to compute
-    hash_value: (optional)
+    hash_type: {'md5', 'sha1'}
+        Type of hash to compute. Should not be used with hash_value, as it is already specified there.
+    hash_value: String (optional)
+        "{hash_type}:{hash_hexvalue}" where "hash_type" in {'md5', 'sha1'}
+        and hash_hexvalue is a hex-encoded string representing the hash value.
         if specified, the hash of the downloaded file will be
-        checked against this value
+        checked against this value.
     name: (optional)
         Name of this dataset component
     message: string
         Text to be displayed to user (if fetch_action == 'message')
     fetch_action: {'copy', 'message', 'url', 'create'}
         Method used to obtain file
+    url_options: dict
+        kwargs to pass when fetching URLs using requests
     file_name:
         output file name. If not specified, use the last
         component of the URL
@@ -242,12 +326,14 @@ def fetch_file(url=None, contents=None,
       ...
     Exception: One of `file_name`, `url`, or `source_file` is required
     '''
-    _valid_fetch_actions = ('message', 'copy', 'url', 'create')
+    _valid_fetch_actions = ('message', 'copy', 'url', 'create', 'google-drive')
 
+    if url_options is None:
+        url_options = {}
     # infer filename from url or src_path if needed
     if file_name is None:
-        file_name = infer_filename(self, url=url, source_file=source_file)
-
+        file_name = infer_filename(url=url, source_file=source_file)
+        logger.debug(f"Inferred filename:{file_name} from url:{url}, source_file:{source_file}")
     if dst_dir is None:
         dst_dir = paths['raw_data_path']
     else:
@@ -270,21 +356,34 @@ def fetch_file(url=None, contents=None,
             fetch_action = 'copy'
         logger.debug(f"No `fetch_action` specified. Inferring type: {fetch_action}")
 
+    if hash_type is None:
+        if hash_value is None:
+            hash_type = 'sha1'
+        else:
+            hash_type, _ = hash_value.split(":")
+    else: # hash_type is not None
+        if hash_value:
+            old_hash_type = hash_type
+            hash_type, _ = hash_value.split(":")
+            if hash_type != old_hash_type:
+                logger.warning(f"Conflicting hash_type and hash_value. Using {hash_type}")
+
     # If the file is already present, check its hash.
-    if raw_data_file.exists():
-        raw_file_hash = hash_file(raw_data_file, algorithm=hash_type).hexdigest()
+    if raw_data_file.exists() and fetch_action != 'create':
+        logger.debug(f"{file_name} already exists. Checking hash...")
+        raw_file_hash = hash_file(raw_data_file, algorithm=hash_type)
         if hash_value is not None:
             if raw_file_hash == hash_value:
                 if force is False:
-                    logger.debug(f"{file_name} already exists and hash is valid. Skipping download.")
+                    logger.debug(f"{file_name} hash is valid. Skipping download.")
                     return True, raw_data_file, raw_file_hash
             else:  # raw_file_hash != hash_value
-                logger.warning(f"{file_name} exists but has bad hash {raw_file_hash}."
+                logger.warning(f"{file_name} exists but has bad hash {raw_file_hash} != {hash_value}."
                                " Re-fetching.")
         else:  # hash_value is None
             if force is False:
                 logger.debug(f"{file_name} exists, but no hash to check. "
-                             f"Setting to {hash_type}:{raw_file_hash}")
+                             f"Setting to {raw_file_hash}")
                 return True, raw_data_file, raw_file_hash
 
     if url is None and contents is None and source_file is None and message is None:
@@ -296,18 +395,29 @@ def fetch_file(url=None, contents=None,
             raise Exception(f"fetch_action = {fetch_action} but `url` unspecified")
         # Download the file
         try:
-            results = requests.get(url)
-            results.raise_for_status()
-            raw_file_hash = _HASH_FUNCTION_MAP[hash_type](results.content).hexdigest()
+            logger.debug(f"fetching {url}")
+            filename = tqdm_download(url, url_options=url_options, filename=raw_data_file)
+            raw_file_hash = hash_file(filename, algorithm=hash_type)
+            results = requests.get(url, **url_options)
             if hash_value is not None:
                 if raw_file_hash != hash_value:
                     logger.error(f"Invalid hash on downloaded {file_name}"
-                                 f" {hash_type}:{raw_file_hash} != {hash_type}:{hash_value}")
-                    return False, f"Bad Hash: {hash_type}:{raw_file_hash}", None
-            with open(raw_data_file, "wb") as code:
-                code.write(results.content)
+                                 f" {raw_file_hash} != {hash_value}")
+                    return False, f"Bad Hash: {raw_file_hash}", None
         except requests.exceptions.HTTPError as err:
             return False, err, None
+    elif fetch_action == 'google-drive':
+        if url is None:
+            raise Exception(f"fetch_action = {fetch_action} but file ID unspecified (expected through url field)")
+        # Download the file
+        try:
+            url_google_drive = f"https://drive.google.com/uc?id={url}"
+            logger.debug(f"Fetch file ID {url} off of Google Drive (full URL {url_google_drive})")
+            gdown.download(url_google_drive, str(raw_data_file), quiet=False)
+        except Exception as err:
+            return False, err, None
+        raw_file_hash = hash_file(raw_data_file, algorithm=hash_type)
+        return True, raw_data_file, raw_file_hash
     elif fetch_action == 'create':
         if contents is None:
             raise Exception(f"fetch_action == 'create' but `contents` unspecified")
@@ -315,14 +425,16 @@ def fetch_file(url=None, contents=None,
             logger.warning(f"Hash value ({hash_value}) ignored for fetch_action=='create'")
         with open(raw_data_file, 'w') as fw:
             fw.write(contents)
-        raw_file_hash = hash_file(raw_data_file, algorithm=hash_type).hexdigest()
+        logger.debug(f"Generating {file_name} hash...")
+        raw_file_hash = hash_file(raw_data_file, algorithm=hash_type)
         return True, raw_data_file, raw_file_hash
     elif fetch_action == 'copy':
         if source_file is None:
             raise Exception("fetch_action == 'copy' but `copy` unspecified")
         logger.warning(f"Hardcoded paths for fetch_action == 'copy' may not be reproducible. Consider using fetch_action='message' instead")
         shutil.copyfile(source_file, raw_data_file)
-        raw_file_hash = hash_file(raw_data_file, algorithm=hash_type).hexdigest()
+        logger.debug(f"Checking hash of {file_name}...")
+        raw_file_hash = hash_file(raw_data_file, algorithm=hash_type)
         source_file = pathlib.Path(source_file)
         logger.debug(f"Copying {source_file.name} to raw_data_path")
         return True, raw_data_file, raw_file_hash
@@ -334,8 +446,7 @@ def fetch_file(url=None, contents=None,
     else:
         raise Exception("No valid fetch_action found: (fetch_action=='{fetch_action}')")
 
-    logger.debug(f'Retrieved {raw_data_file.name} (hash '
-                 f'{hash_type}:{raw_file_hash})')
+    logger.debug(f'Retrieved {raw_data_file.name} ({hash_type}:{raw_file_hash})')
     return results.status_code, raw_data_file, raw_file_hash
 
 def unpack(filename, dst_dir=None, src_dir=None, create_dst=True, unpack_action=None):
@@ -420,11 +531,11 @@ def unpack(filename, dst_dir=None, src_dir=None, create_dst=True, unpack_action=
 
     with opener(path, mode) as f_in:
         if archive:
+            logger.debug(f"Extracting {filename.name}...")
             f_in.extractall(path=dst_dir)
-            logger.debug(f"Extracting {filename.name}")
         else:
             outfile = pathlib.Path(outfile).name
-            logger.debug(f"{verb} {outfile}")
+            logger.debug(f"{verb} {outfile}...")
             with open(pathlib.Path(dst_dir) / outfile, outmode) as f_out:
                 shutil.copyfileobj(f_in, f_out)
 

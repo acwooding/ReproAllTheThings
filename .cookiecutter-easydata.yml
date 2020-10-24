@@ -7,4 +7,3 @@ default_context:
   project_name: reproallthethings
   python_version: latest
   repo_name: reproallthethings
-  virtualenv: conda
