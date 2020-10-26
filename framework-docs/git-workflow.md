@@ -1,10 +1,9 @@
-Wondering how to use git effectively with an Easydata repo?
+Here's our suggestion for a reliable git workflow that works well in small team settings using [Easydata][cookiecutter-easydata].
 
-Here's our suggestion for a reliable git workflow that works well in small team settings.
+**Note**: These instructions assume you are using SSH keys (and not HTTPS authentication) with github.com. If you haven't set up SSH access to your repo host, see [Configuring SSH Access to Github or Gitlab][git-ssh]. This also includes instructions for using more than one account with SSH keys.
 
-**Note**: These instructions assume you are using SSH keys (and not HTTPS authentication) with github.com. If you haven't set up SSH access to your repo host, see [Configuring SSH Access to Github or Gitlab]. This also includes instructions for using more than one account with SSH keys.
+[git-ssh]: https://github.com/hackalog/cookiecutter-easydata/wiki/Configuring-SSH-Access-to-Github-or-GitLab
 
-[configuring ssh access to github or gitlab]: https://github.com/hackalog/cookiecutter-easydata/wiki/Configuring-SSH-Access-to-Github-or-GitLab)
 ### Walk softly, and carry a personal Fork
 
 We strongly recommend you make all your edits on a personal fork of this repo. Here's how to create such a fork:
