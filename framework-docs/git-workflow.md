@@ -4,24 +4,32 @@ Here's our suggestion for a reliable git workflow that works well in small team 
 
 [git-ssh]: https://github.com/hackalog/cookiecutter-easydata/wiki/Configuring-SSH-Access-to-Github-or-GitLab
 
-### Walk softly, and carry a personal Fork
+## Git Configuration
+### Create a Personal Fork
 
 We strongly recommend you make all your edits on a personal fork of this repo. Here's how to create such a fork:
+
 * On Github or Gitlab, press the Fork button in the top right corner.
 * On Bitbucket, press the "+" icon on the left and choose **Fork this Repo**
 
-### Swimming Upstream
+### Local, `origin`, and `upstream`
 Next, you should configure your git remotes so that `origin` refers to your personal github.com fork, and `upstream` refers to the repo you forked from
 
 1. Clone your personal fork to your local machine
-   `git clone git@github.com:<your github handle>/reproallthethings.git`
+   ```git clone git@github.com:<your github handle>/reproallthethings.git```
 1. Add the main source repo as a remote branch called `upstream` (to make syncing easier):
-  `cd reproallthethings`
-  `git remote add upstream git@github.com:<upstream-repo>/reproallthethings.git`
 
+  ```cd reproallthethings
+  git remote add upstream git@github.com:<upstream-repo>/reproallthethings.git```
 
-### Can't see the forest for the branches
-To make life easiest, we recommend you use your master branch **only** for tracking changes in the upstream `upstream/master`, and do all your development **in branches**. This combination makes it much easier not only to stay up to date with changes in the shared project repo, but also makes it easier to submit Pull (or Merge) Requests (PRs) against the upstream project repository should you want to contribute changes back.
+To summarize:
+
+* "local" refers to git checkout on your local machine (or JupyterHub instance). This is the one you work with most of the time.
+* `upstream` refers to the shared Easydata repo; i.e. the **team repo**,
+* `origin` refers to your **personal fork** of the shared Easydata repo on github.com.
+
+### Work in Branches
+To make life easiest, we recommend you do all your development **in branches**, and use your master branch **only** for tracking changes in the shared `upstream/master`. This combination makes it much easier not only to stay up to date with changes in the shared project repo, but also makes it easier to submit Pull/Merge Requests (PRs) against the upstream project repository should you want to share your code or data.
 
 ## The Easydata git workflow
 
@@ -38,7 +46,7 @@ git commit -m "put your commit message here"
 ```
 
 ### Did I do any work elsewhere?
-Did you do work on your personal fork, but on a different machine? Make sure your local branch is up-to-date with your personal fork (`origin`):
+Did you make changes to your personal fork, but on a different machine? Make sure your local branch is up-to-date with your personal fork (`origin`):
 ```bash
 git checkout master
 git fetch origin --prune
@@ -46,7 +54,8 @@ git merge origin/master
 ```
 
 ### What happened upstream?
-Next, check if the upstream repo has been updated in your absense:
+Did someone make changes to the `upstream` repo in your absense?
+Let's fetch and merge those changes
 
 ```bash
 git checkout master
@@ -72,8 +81,8 @@ git checkout master
 git checkout -b new_branch_name
 ```
 
-### Clean up, clean up, everybody, everywhere
-Finally, clean up any of your old branches that are fully merged.
+### Clean up the old branches
+Now that you're up-to-date, you can clean up any of your old branches that are fully merged (and hence, can be deleted.)
 ```bash
 git branch --merged master
 git branch -d <name_of_merged_branch>
