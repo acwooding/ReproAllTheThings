@@ -64,12 +64,12 @@ name: reproallthethings
 ```
 To add any package available from conda, add it to the end of the list. If you have a PYPI dependency that's not avaible via conda, add it to the list of pip installable dependencies under `  - pip:`.
 
-You can include any GitHub python-based project in the `pip` section via `git+https://github.com/<github handle>/<package>`.
+You can include any github.com python-based project in the `pip` section via `git+https://github.com/<my_git_handle>/<package>`.
 
-In particular, if you're working off of a fork or a work in progress branch of a repo in GitHub (say, your personal version of <package>), you can change `git+https://github.com/<github handle>/<package>` to
+In particular, if you're working off of a fork or a work in progress branch of a repo in github.com (say, your personal version of <package>), you can change `git+https://github.com/<my_git_handle>/<package>` to
 
-* `git+https://github.com/<my github handle>/<package>.git` to point to the master branch of your fork and
-* `git+https://github.com/<my github handle>/<package>.git@<my branch>` to point to a specific branch.
+* `git+https://github.com/<my_git_handle>/<package>.git` to point to the master branch of your fork and
+* `git+https://github.com/<my_git_handle>/<package>.git@<my branch>` to point to a specific branch.
 
 Once you're done your edits, run `make update_environment` and voila, you're updated.
 

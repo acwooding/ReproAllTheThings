@@ -3,7 +3,7 @@
 It's impossible to test the configurations on every possible machine, so we haven't caught everything. But we're working on making fixes as problems come up. Here's what we've encountered so far (with links to the issues in question if you want to deep dive into the fix).
 
 Before you report a problem, make sure you are running the latest version of the surge repo.
-Assuming you are following the [recommended git workflow](https://github.com/hackalog/cookiecutter-easydata/wiki/Github-Workflow-Cheat-Sheet) (i.e. you have set your `upstream` remote to point to the surge repo, you are working in a branch, and your `master` branch is tracking the surge repo), this means doing a:
+Assuming you are following the [recommended git workflow](git-workflow.md) (i.e. you have set your `upstream` remote to point to the surge repo, you are working in a branch, and your `master` branch is tracking the surge repo), this means doing a:
 ```
 git checkout master
 git fetch upstream --prune
