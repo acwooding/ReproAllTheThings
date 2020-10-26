@@ -7,7 +7,7 @@ ReproAllTheThings
 _Author: John Healy, Amy Wooding_
 
 Reproducing the [EmbedAllTheThings] notebooks by [jc-healy] and making them reproducible via the
-[cookiecutter-easydata][Easydata] framework.
+[Easydata][cookiecutter-easydata] framework.
 
 [EmbedAllTheThings]: https://github.com/jc-healy/EmbedAllTheThings
 [cookiecutter-easydata]: https://github.com/hackalog/cookiecutter-easydata
