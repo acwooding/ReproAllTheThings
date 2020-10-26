@@ -19,8 +19,10 @@ Next, you should configure your git remotes so that `origin` refers to your pers
    ```git clone git@github.com:<your github handle>/reproallthethings.git```
 1. Add the main source repo as a remote branch called `upstream` (to make syncing easier):
 
-  ```cd reproallthethings
-  git remote add upstream git@github.com:<upstream-repo>/reproallthethings.git```
+  ```
+  cd reproallthethings
+  git remote add upstream git@github.com:<upstream-repo>/reproallthethings.git
+```
 
 To summarize:
 
