@@ -63,7 +63,7 @@ git branch --merged master
 git branch -d <name_of_merged_branch>
 ```
 
-Got any suggestions for improvements to this workflow? File an issue at
-[cookiecutter-easydata].
+_Got any suggestions for improvements to this workflow? File an issue at
+[cookiecutter-easydata]._
 
 [cookiecutter-easydata]: https://github.com/hackalog/cookiecutter-easydata/
