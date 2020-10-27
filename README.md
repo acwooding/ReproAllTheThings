@@ -6,7 +6,7 @@ ReproAllTheThings
 ==============================
 _Author: John Healy, Amy Wooding_
 
-Reproducing EmbedAllTheThings by jc-healy and making it reproducible via easydata.
+Reproducing jc-healy's EmbedAllTheThings notebooks usint the Easydata framework.
 
 GETTING STARTED
 ---------------
