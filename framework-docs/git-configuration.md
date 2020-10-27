@@ -41,5 +41,8 @@ upstream	git@github.com:<upstream-repo>/reproallthethings.git (fetch)
 upstream	git@github.com:<upstream-repo>/reproallthethings.git (push)
 ```
 
-### Work in Branches
+### Do Your Work in Branches
 To make life easiest, we recommend you do all your development **in branches**, and use your master branch **only** for tracking changes in the shared `upstream/master`. This combination makes it much easier not only to stay up to date with changes in the shared project repo, but also makes it easier to submit Pull/Merge Requests (PRs) against the upstream project repository should you want to share your code or data.
+
+### A Useful Git Workflow
+Once you've got your local, `origin`, and `upstream` branches configured, you can follow the instructions in this handy [Git Workflow Cheat Sheet](git-workflow.md) to keep your working copy of the repo in sync with the others.
