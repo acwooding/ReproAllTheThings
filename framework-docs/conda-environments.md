@@ -4,7 +4,9 @@ The `reproallthethings` repo is set up with template code to make managing your 
 
 If you haven't yet, configure your conda environment.
 
-## Configuring your conda environment
+## Configuring your python environment
+Easydata uses conda to manage python packages installed by both conda **and pip**.
+
 ### Adjust your `.condarc`
 **WARNING FOR EXISTING CONDA USERS**: If you have `conda-forge` listed as a channel in your `.condarc` (or any other channels other than `default`), **remove them**. These channels should be specified in `environment.yml` instead.
 
