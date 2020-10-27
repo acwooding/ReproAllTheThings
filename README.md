@@ -23,7 +23,7 @@ GETTING STARTED
 ### Git Configuraiton and Checking Out the Repo
 
 If you haven't yet done so, please follow the instrucitons
-in [Setting up git and Checking Out the Repo](git-configuration.md) in
+in [Setting up git and Checking Out the Repo](framework-docs/git-configuration.md) in
 order to check-out the code and set-up your remote branches
 
 Note: These instructions assume you are using SSH keys (and not HTTPS authentication) with github.com.
