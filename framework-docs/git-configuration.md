@@ -40,6 +40,13 @@ origin	git@github.com:<your_git_handle>/reproallthethings.git (push)
 upstream	git@github.com:<upstream-repo>/reproallthethings.git (fetch)
 upstream	git@github.com:<upstream-repo>/reproallthethings.git (push)
 ```
+or if you use HTTPS-based authentication:
+```
+origin	https://github.com/<your_git_handle>/reproallthethings.git (fetch)
+origin	https://github.com/<your_git_handle>/reproallthethings.git (push)
+upstream	https://github.com/<upstream-repo>/reproallthethings.git (fetch)
+upstream	https://github.com/<upstream-repo>/reproallthethings.git (push)
+```
 
 ### Do Your Work in Branches
 To make life easiest, we recommend you do all your development **in branches**, and use your master branch **only** for tracking changes in the shared `upstream/master`. This combination makes it much easier not only to stay up to date with changes in the shared project repo, but also makes it easier to submit Pull/Merge Requests (PRs) against the upstream project repository should you want to share your code or data.
