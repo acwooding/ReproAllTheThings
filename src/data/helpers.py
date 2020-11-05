@@ -49,6 +49,7 @@ def dataset_from_csv_manual_download(ds_name, csv_path, download_message,
 
     if ds_name in dataset_catalog() and not overwrite_catalog:
         raise KeyError(f"'{ds_name}' already in catalog")
+
     csv_path = pathlib.Path(csv_path)
     # Create a datasource
     raw_ds_name = ds_name+"_raw"
