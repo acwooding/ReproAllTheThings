@@ -28,6 +28,7 @@ REQUIREMENTS
 * conda >= 4.8 (via Anaconda or Miniconda)
 * git >= 2.5
 
+
 GETTING STARTED
 ---------------
 ### Git Configuration and Checking Out the Repo
