@@ -1,11 +1,12 @@
 from .decorators import SingletonDecorator
 from .kvstore import KVStore
+from .log import logger
 import pathlib
 
 class PathStore(KVStore):
     """Persistent Key-Value store for project-level paths
 
-    >>> b = PathStore(config_file='/tmp/project/catalog/config.ini', \
+    >>> b = PathStore(config_file='/tmpx/project/catalog/config.ini', \
         project_path='${catalog_path}/..', \
         data_path='${project_path}/data', \
         persistent=False)
@@ -13,14 +14,14 @@ class PathStore(KVStore):
     By default, the project directory is the parent of the directory containing the `config_file`:
 
     >>> b['project_path']
-    PosixPath('/tmp/project')
+    PosixPath('/tmpx/project')
     >>> b['data_path']
-    PosixPath('/tmp/project/data')
+    PosixPath('/tmpx/project/data')
 
     The `catalog_path` is set upon instantiation and is read-only:
 
     >>> b['catalog_path']
-    PosixPath('/tmp/project/catalog')
+    PosixPath('/tmpx/project/catalog')
     >>> b['catalog_path'] = '/tmp'
     Traceback (most recent call last):
      ...
@@ -28,17 +29,17 @@ class PathStore(KVStore):
 
     Changing a value changes all values that expand to contain it:
 
-    >>> b['project_path'] = '/tmp'
+    >>> b['project_path'] = '/tmpy'
     >>> b['project_path']
-    PosixPath('/tmp')
+    PosixPath('/tmpy')
     >>> b['data_path']
-    PosixPath('/tmp/data')
+    PosixPath('/tmpy/data')
 
     We can have multiple levels of expansion:
 
     >>> b['raw_data_path'] = "${data_path}/raw"
     >>> b['raw_data_path']
-    PosixPath('/tmp/data/raw')
+    PosixPath('/tmpy/data/raw')
     >>> b['project_path'] = '/tmp3'
     >>> b['data_path']
     PosixPath('/tmp3/data')
@@ -58,7 +59,10 @@ class PathStore(KVStore):
             self._config_file = "config.ini"
         else:
             self._config_file = pathlib.Path(config_file)
-        super().__init__(*args, config_section=config_section, config_file=self._config_file, **kwargs)
+        self._usage_warning = False
+        super().__init__(*args, config_section=config_section,
+                         config_file=self._config_file, **kwargs)
+        self._usage_warning = True
 
     def _write(self):
         """temporarily hide protected keys when saving"""
@@ -72,12 +76,18 @@ class PathStore(KVStore):
         """Do not set a key if it is protected"""
         if key in self._protected:
             raise AttributeError(f"{key} is write-protected")
+
+        if self._usage_warning:
+            logger.warning(f"'{key}' is a local configuration variable, and for reproducibility reasons, should not set from a notebook or shared code. It is better to edit '{self._config_file}' instead. We have set it, but you have been warned.")
+
         super().__setitem__(key, value)
+
 
     def __getitem__(self, key):
         """get keys (including protected ones), converting to paths and fully resolving them"""
         if key in self._protected:
             return getattr(self, key)
+        self._read()
         return pathlib.Path(super().__getitem__(key)).resolve()
 
     @property

@@ -8,6 +8,7 @@ class KVStore(MutableMapping):
     Basic functionality is that of a dictionary, with the addition of an implicit
     `config_file` and `config_section`:
 
+    >>> getfixture('manage_config_ini')  # This is just a test fixture, please disregard
     >>> d = KVStore({'key1':'value1'}, key2='value2')
     >>> d['key3'] = 'value3'
     >>> d
@@ -85,10 +86,7 @@ class KVStore(MutableMapping):
         self.data = dict()
 
         if self._config_file.exists() and not overwrite:
-            self._config.read(self._config_file)
-            if not self._config.has_section(config_section):
-                # File exists but we are adding to a new section of it
-                self._config.add_section(config_section)
+            self._read()
         else:
             self._config.add_section(config_section)
             self._config.read_dict(self.data)
@@ -116,6 +114,12 @@ class KVStore(MutableMapping):
     def __len__(self):
         return len(self.data)
 
+    def _read(self):
+        self._config.read(self._config_file)
+        if not self._config.has_section(self._config_section):
+            # File exists but we are adding to a new section of it
+            self._config.add_section(self._config_section)
+
     def _write(self):
         if self._persistent:
             with open(self._config_file, 'w') as fw:
@@ -127,6 +131,7 @@ class KVStore(MutableMapping):
 
     def __str__(self):
         return str({k:v for k,v in self._config.items(self._config_section, raw=False)})
+
 
 if __name__ == "__main__":
     import doctest

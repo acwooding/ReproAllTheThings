@@ -1,10 +1,11 @@
 default_context:
   author_name: John Healy, Amy Wooding
   conda_path: ~/miniconda3/bin/conda
+  default_branch: master
   description: Reproducing EmbedAllTheThings by jc-healy and making it reproducible via easydata.
   module_name: src
   open_source_license: MIT
   project_name: reproallthethings
   python_version: 3.7
   repo_name: reproallthethings
-  virtualenv: conda
+  upstream_location: github.com
