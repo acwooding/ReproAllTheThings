@@ -5,7 +5,6 @@ import os
 from sklearn.model_selection import train_test_split
 from .datasets import Dataset
 from ..log import logger
-from ..utils import custom_join
 
 __all__ = [
     'available_transformers'
