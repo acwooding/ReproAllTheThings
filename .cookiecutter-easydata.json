@@ -2,11 +2,12 @@
     "_template": "cookiecutter-easydata",
     "author_name": "John Healy, Amy Wooding",
     "conda_path": "~/miniconda3/bin/conda",
-    "description": "Reproducing EmbedAllTheThings by jc-healy and making it reproducible via easydata.",
+    "default_branch": "master",
+    "description": "Reproducing @jc-healy's EmbedAllTheThings making it reproducible via easydata.",
     "module_name": "src",
     "open_source_license": "MIT",
-    "project_name": "reproallthethings",
+    "project_name": "ReproAllTheThings",
     "python_version": "3.7",
     "repo_name": "reproallthethings",
-    "virtualenv": "conda"
+    "upstream_location": "github.com"
 }

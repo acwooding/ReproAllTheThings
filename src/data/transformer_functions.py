@@ -1,14 +1,43 @@
 import pathlib
 
+import pandas as pd
+from tqdm.auto import tqdm
+
 from sklearn.model_selection import train_test_split
 
 from . import Dataset
+from .. import paths
+from ..log import logger
 
 __all__ = [
+    'apply_single_function',
+    'csv_to_pandas',
+    'new_dataset',
     'sklearn_train_test_split',
     'sklearn_transform',
 ]
 
+def new_dataset(dsdict, *, dataset_name, dataset_opts=None):
+    """
+    Transformer function: create a dataset from its default constructor
+
+    Parameters
+    ----------
+    dsdict: ignored
+
+    dataset_name:
+        Name of dataset to create
+    dataset_opts: dict
+        kwargs dict to pass to Dataset constructor
+
+    Returns
+    -------
+    dsdict {dataset_name: Dataset}
+    """
+    if dataset_opts is None:
+        dataset_opts = {}
+    ds = Dataset(dataset_name, **dataset_opts)
+    return {dataset_name: ds}
 
 def sklearn_train_test_split(ds_dict, **split_opts):
     """Transformer Function: performs a train/test split.
@@ -78,3 +107,83 @@ def sklearn_transform(ds_dict, transformer_name, transformer_opts=None, subselec
         new_dsname = f"{dset.name}_{transformer.__class__.__name__}"
         new_dsdict[new_dsname] = Dataset(dataset_name=new_dsname, metadata=dset.metadata, data=new_data)
     return new_dsdict
+
+def csv_to_pandas(ds_dict, *, output_map, **opts):
+    """
+
+    Parameters
+    ----------
+    ds_dict:
+        input datasets. If multiple datasets, processing will stop at first matching csv_filename
+    output_map: dict(new_dataset_name:csv_filename)
+        datasets to create. new_dataset_name will be created using csv_filename as its data column.
+    **opts:
+        Remaining options will be ignored
+    """
+    new_ds = {}
+    df = None
+    for ds_name, dset in ds_dict.items():
+        extra = dset.metadata.get('extra', None)
+        if extra is not None:
+            logger.debug(f"Input dataset {ds_name} has extra data. Processing...")
+            for rel_dir, file_dict in extra.items():
+                for new_dsname, csv_filename in output_map.items():
+                    if csv_filename in file_dict:
+                        logger.debug(f"Found {csv_filename}. Creating {new_dsname} dataset")
+                        path = paths['processed_data_path'] / rel_dir / csv_filename
+                        df = pd.read_csv(path)
+                        new_metadata = dset.metadata
+                        new_metadata.pop('extra', None)
+                        new_ds[new_dsname] = Dataset(dataset_name=new_dsname, data=df, metadata=new_metadata)
+    return new_ds
+
+
+
+def apply_single_function(ds_dict, *, source_dataset_name, dataset_name, serialized_function, added_descr_txt, drop_extra, **opts):
+    """
+    Parameters
+    ----------
+    ds_dict:
+        input datasets.
+    source_dataset_name:
+        name of the dataset that the new dataset will be derived from
+    dataset_name:
+        name of the new dataset_catalog
+    added_descr_txt: Default None
+        new description text to be appended to the metadata descr
+    serialized_function:
+        function (serialized by src.utils.serialize_partial) to run on .data to produce the new .data
+    drop_extra: boolean
+        drop the .extra part of the metadata
+    **opts:
+        Remaining options will be ignored
+    """
+
+    new_ds = {}
+
+    logger.debug(f"Loading {source_dataset_name}...")
+    ds = ds_dict.get(source_dataset_name)
+
+    new_metadata = ds.metadata.copy()
+    new_metadata['descr'] += added_descr_txt
+    if drop_extra:
+        if new_metadata.get('extra', 0) != 0:
+            new_metadata.pop('extra')
+
+    logger.debug(f"Applying data function...")
+    data_function=deserialize_partial(serialized_function)
+    new_data = data_function(ds.data)
+
+    if ds.target is not None:
+        new_target = ds.target.copy()
+    else:
+        new_target = None
+
+    new_ds[dataset_name] = Dataset(dataset_name=dataset_name, data=new_data, target=new_target, metadata=new_metadata)
+    return new_ds
+
+
+    new_metadata = ds.metadata.copy()
+
+    new_ds[new_dsname] = Dataset(dataset_name=new_dsname, data=preprocessed_corpus, metadata=new_metadata)
+    return new_ds

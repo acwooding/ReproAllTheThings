@@ -6,6 +6,11 @@ import pandas as pd
 import pathlib
 from .. import paths
 
+from tqdm.auto import tqdm
+
+from .. import paths
+from ..log import logger
+
 __all__ = [
     'process_wine_reviews',
 ]
