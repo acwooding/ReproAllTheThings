@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from . import Dataset
 from .. import paths
 from ..log import logger
+from .utils import deserialize_partial
 
 __all__ = [
     'apply_single_function',
@@ -187,3 +188,31 @@ def apply_single_function(ds_dict, *, source_dataset_name, dataset_name, seriali
 
     new_ds[new_dsname] = Dataset(dataset_name=new_dsname, data=preprocessed_corpus, metadata=new_metadata)
     return new_ds
+
+def limit_to_common_varietals(df, min_reviews=25):
+    '''
+    Take the subselection of the wine reviews dataset (df) that only contains varietals with at least
+    min_reviews reviews. All entries in the final dataframe must have a variety.
+
+    Parameters
+    ----------
+    df: DataFrame
+        wine reviews dataframe with 'variety' as  a column
+    min_reviews: int
+        minimum number of reviews needed to keep a varietal
+
+    Returns
+    -------
+    df_common_variety:
+        dataframe that only includes reviews with a variety that appears at least min_reviews times.
+    '''
+    df_variety = df.dropna(axis=0, subset=['variety']).copy()
+
+    varietal_counts = df_variety.variety.value_counts()
+    df_variety['common_varietal'] = df_variety.variety.apply(lambda x: varietal_counts[x] > min_reviews)
+
+    df_common_variety = df_variety[df_variety.common_varietal].copy()
+    df_common_variety.reset_index(inplace=True)
+    df_common_variety.drop(columns=['index', 'common_varietal'], inplace=True)
+
+    return df_common_variety

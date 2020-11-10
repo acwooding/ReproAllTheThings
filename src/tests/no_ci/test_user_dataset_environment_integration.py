@@ -17,3 +17,7 @@ class TestDatasets(unittest.TestCase):
     def test_wine_reviews_150k(self):
         ds = Dataset.load('wine_reviews_150k')
         assert ds.data.shape == (150930, 10)
+
+    def test_wine_reviews_130k_varietals_75(self):
+        ds = Dataset.load('wine_reviews_130k_varietals_75')
+        assert ds.data.shape == (123495, 13)
