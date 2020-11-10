@@ -2,6 +2,8 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/acwooding/ReproAllTheThings/badge.svg)](https://coveralls.io/github/acwooding/ReproAllTheThings)
 
+[![ReproAllTheThings](https://circleci.com/gh/acwooding/ReproAllTheThings.svg?style=shield)](https://circleci.com/gh/acwooding/ReproAllTheThings)
+
 ReproAllTheThings
 ==============================
 _Author: John Healy, Amy Wooding_
