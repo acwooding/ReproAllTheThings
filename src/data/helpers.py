@@ -8,8 +8,9 @@ from .. import paths
 
 from . import (DataSource, Dataset, hash_file, TransformerGraph,
                create_transformer_pipeline, dataset_catalog, add_datasource)
-from .transformer_functions import csv_to_pandas, new_dataset
+from .transformer_functions import csv_to_pandas, new_dataset, apply_single_function
 from .extra import process_extra_files
+from .utils import serialize_partial
 
 __all__ = [
     'dataset_from_csv_manual_download',
