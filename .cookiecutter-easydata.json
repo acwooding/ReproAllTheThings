@@ -3,7 +3,8 @@
     "author_name": "John Healy, Amy Wooding",
     "conda_path": "~/miniconda3/bin/conda",
     "default_branch": "master",
-    "description": "Reproducing @jc-healy's EmbedAllTheThings making it reproducible via easydata.",
+    "description": "Reproducing the [EmbedAllTheThings] notebooks by [jc-healy] and making them reproducible via the
+[Easydata][cookiecutter-easydata] framework.",
     "module_name": "src",
     "open_source_license": "MIT",
     "project_name": "ReproAllTheThings",
