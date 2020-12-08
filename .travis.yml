@@ -25,6 +25,7 @@ install:
 
 script:
   - cd src
+  - export CI_RUNNING=yes
   - coverage run -m pytest --doctest-modules --doctest-continue-on-failure --verbose
 
 after_success:
