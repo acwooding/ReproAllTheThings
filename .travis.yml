@@ -24,9 +24,7 @@ install:
   - make update_environment
 
 script:
-  - cd src
-  - export CI_RUNNING=yes
-  - coverage run -m pytest --doctest-modules --doctest-continue-on-failure --verbose
-
+  - make test_with_coverage CI_RUNNING=yes
+  
 after_success:
   - coveralls
