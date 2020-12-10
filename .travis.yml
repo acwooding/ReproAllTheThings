@@ -25,6 +25,6 @@ install:
 
 script:
   - make test_with_coverage CI_RUNNING=yes
-
+  
 after_success:
   - coveralls
