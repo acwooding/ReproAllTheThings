@@ -7,8 +7,8 @@ from ..log import logger
 from .. import paths
 
 from . import (DataSource, Dataset, hash_file, TransformerGraph,
-               create_transformer_pipeline, dataset_catalog, add_datasource)
-from .transformer_functions import csv_to_pandas, new_dataset
+               create_transformer_pipeline, dataset_catalog, add_datasource, serialize_partial)
+from .transformer_functions import csv_to_pandas, new_dataset, apply_single_function
 from .extra import process_extra_files
 
 __all__ = [
@@ -49,10 +49,9 @@ def dataset_from_csv_manual_download(ds_name, csv_path, download_message,
 
     if ds_name in dataset_catalog() and not overwrite_catalog:
         raise KeyError(f"'{ds_name}' already in catalog")
-
     csv_path = pathlib.Path(csv_path)
     # Create a datasource
-    raw_ds_name = ds_name+"_raw"
+    raw_ds_name = ds_name+"-raw"
     logger.debug(f"Creating raw datasource: {raw_ds_name}")
     dsrc = DataSource(raw_ds_name)
 
