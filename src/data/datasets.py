@@ -481,7 +481,7 @@ class Dataset(Bunch):
             name of dataset catalog path. Relative to `catalog_path`.
         transformer_path: str.
             name of transformer catalog path. Relative to `catalog_path`.
-        force: Boolean
+        force_regenerate: Boolean
             if True, ignore any Dataset cache and always regenerate
         """
         if dataset_cache_path is None:
@@ -501,7 +501,7 @@ class Dataset(Bunch):
         if metadata_only:
             return meta
 
-        ds = xform_graph.generate(dataset_name, force=force)
+        ds = xform_graph.generate(dataset_name, force=force_regenerate)
         if ds is None:
             return None
 
