@@ -132,8 +132,8 @@ def cached_datasets(dataset_path=None, keys_only=True):
 
 #dataset_catalog = partial(load_catalog, catalog_file='datasets.json')
 datasource_catalog = partial(load_catalog, catalog_file='datasources.json')
-transformer_catalog = partial(Catalog.from_disk, 'transformers')
-dataset_catalog = partial(Catalog.from_disk, 'datasets')
+transformer_catalog = partial(Catalog.load, 'transformers')
+dataset_catalog = partial(Catalog.load, 'datasets')
 
 def del_from_catalog(key, catalog_path=None, catalog_file=None):
     """Delete an entry from the catalog file
@@ -1592,8 +1592,8 @@ class TransformerGraph:
         else:
             catalog_path = pathlib.Path(catalog_path)
 
-        self.transformers = Catalog.from_disk(transformer_path, catalog_path=catalog_path)
-        self.datasets = Catalog.from_disk(dataset_path, catalog_path=catalog_path)
+        self.transformers = Catalog.load(transformer_path, catalog_path=catalog_path)
+        self.datasets = Catalog.load(dataset_path, catalog_path=catalog_path)
 
         self._validate_hypergraph()
         self._update_degrees()
@@ -2208,7 +2208,7 @@ def apply_transforms(datasets=None, catalog_path=None, transformer_path=None, ou
     transformer_list = transformer_list(transformer_path=transformer_path,
                                             transformer_file=transformer_file)
     datasources = available_datasources()
-    transformers = Catalog.from_disk('transformers')
+    transformers = Catalog.load('transformers')
 
     for tdict in transformer_list:
         datasource_opts = tdict.get('datasource_opts', {})
