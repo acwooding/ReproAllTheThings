@@ -37,6 +37,19 @@ __all__ = [
     'del_from_catalog',
 ]
 
+def default_transformer(dsdict, **kwargs):
+    """Placeholder for transformerdata processing function.
+
+    This is the identity function.
+
+    Returns
+    -------
+    dsdict: The input dsdict unmodified
+    """
+    transformer_name = kwargs.get('transformer_name', 'unknown-transformer')
+    logger.error(f"'{transformer_name}()' function not found. Define it add it to the `user` namespace for correct behavior")
+    return dsdict
+
 def load_catalog(catalog_path=None, catalog_file='catalog.json', include_filename=False, keys_only=True):
     """Get the set of available datasets from the catalog (nodes in the transformer graph).
 
@@ -81,19 +94,6 @@ def load_catalog(catalog_path=None, catalog_file='catalog.json', include_filenam
     if keys_only:
         return list(catalog_dict.keys())
     return catalog_dict
-
-def default_transformer(dsdict, **kwargs):
-    """Placeholder for transformerdata processing function.
-
-    This is the identity function.
-
-    Returns
-    -------
-    dsdict: The input dsdict unmodified
-    """
-    transformer_name = kwargs.get('transformer_name', 'unknown-transformer')
-    logger.error(f"'{transformer_name}()' function not found. Define it add it to the `user` namespace for correct behavior")
-    return dsdict
 
 def cached_datasets(dataset_path=None, keys_only=True):
     """Get the set of datasets currently cached to disk.
