@@ -3,7 +3,9 @@ class EasydataError(Exception):
     pass
 
 class ParameterError(EasydataError):
-    """Paramater(s) to a function or method are invalid"""
+    """Parameter(s) to a function or method are invalid
+
+    This can be used instead of a ValueError or TypeError"""
     pass
 
 class ValidationError(EasydataError):
@@ -11,9 +13,15 @@ class ValidationError(EasydataError):
     pass
 
 class ObjectCollision(EasydataError):
-    """Object already exists in object store"""
+    """Object already exists in object store
+
+    This is more general than a FileExistsError, as it applies to more than just the filesystem.
+    """
     pass
 
 class NotFoundError(EasydataError):
-    """Named object not found in object store"""
+    """Named object not found in object store
+
+    This is more general than a FileNotFoundError, as it applies to more than just the filesystem.
+    """
     pass
