@@ -1,0 +1,15 @@
+{
+  "output_datasets": [
+    "wine_reviews_130k"
+  ],
+  "transformations": [
+    {
+      "transformer_kwargs": {
+        "dataset_name": "wine_reviews_130k",
+        "datasource_name": "wine_reviews"
+      },
+      "transformer_module": "src.data.datasets",
+      "transformer_name": "dataset_from_datasource"
+    }
+  ]
+}
