@@ -1,5 +1,5 @@
 {
-    "_template": "cookiecutter-easydata",
+    "_template": "easydata",
     "author_name": "John Healy, Amy Wooding",
     "conda_path": "~/miniconda3/bin/conda",
     "default_branch": "master",

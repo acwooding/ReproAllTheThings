@@ -14,16 +14,17 @@ Reproducing the [EmbedAllTheThings] notebooks by [jc-healy] and making them repr
 [cookiecutter-easydata]: https://github.com/hackalog/cookiecutter-easydata
 [jc-healy]: https://github.com/jc-healy
 
-This git repo is build using the [cookiecutter-easydata] template and
-workflow for making it easy to share your work with others and to
-build on the work of others. This includes:
+ABOUT EASYDATA
+---------------
+
+This git repository is build on the [Easydata](https://github.com/hackalog/easydata) framework, making it easy to share your work with others andto build on the work of others. Easydata includes:
 
 * managing conda environments in a consistent and reproducible way,
 * built in dataset management (including tracking of licenses),
 * pre-established project structure,
 * workflows and conventions for contributing notebooks and other code.
 
-REQUIREMENTS
+EASYDATA REQUIREMENTS
 ------------
 * GNU make
 * conda >= 4.8 (via Anaconda or Miniconda)
@@ -32,21 +33,28 @@ REQUIREMENTS
 
 GETTING STARTED
 ---------------
-### Git Configuration and Checking Out the Repo
+### Initial Git Configuration and Checking Out the Repo
 
 If you haven't yet done so, please follow the instrucitons
 in [Setting up git and Checking Out the Repo](framework-docs/git-configuration.md) in
 order to check-out the code and set-up your remote branches
 
 Note: These instructions assume you are using SSH keys (and not HTTPS authentication) with github.com.
-If you haven't set up SSH access to github.com, see [Configuring SSH Access to github.com](https://github.com/hackalog/cookiecutter-easydata/wiki/Configuring-SSH-Access-to-Github). This also includes instuctions for using more than one account with SSH keys.
+If you haven't set up SSH access to github.com, see [Configuring SSH Access to github.com](https://github.com/hackalog/easydata/wiki/Configuring-SSH-Access-to-Github). This also includes instuctions for using more than one account with SSH keys.
 
 Once you've got your local, `origin`, and `upstream` branches configured, you can follow the instructions in this handy [Git Workflow Cheat Sheet](framework-docs/git-workflow.md) to keep your working copy of the repo in sync with the others.
 
 ### Setting up your environment
-**WARNING**: If you have conda-forge listed as a channel in your `.condarc` (or any other channels other than defaults), remove it during the course of the workshop. Even better, don't use a `.condarc` for managing channels, as it overrides the `environment.yml` instructions and makes things less reproducible. Make the changes to the `environment.yml` file if necessary. We've had some conda-forge related issues with version conflicts. We also recommend [setting your channel priority to 'strict'](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html) to reduce package incompatibility problems.
+**WARNING**: If you have conda-forge listed as a channel in your `.condarc` (or any other channels other than defaults), you may experience great difficulty generating reproducible conda environments.
 
-Initial setup:
+We recommend you remove conda-forge (and all other non-default channels) from your `.condarc` file and [set your channel priority to 'strict'](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html). Alternate channels can be specified explicitly in your your `environment.yml` by prefixing your package name with `channel-name::`; e.g.
+```
+  - wheel                    # install from the default (anaconda) channel
+  - pytorch::pytorch         # install this from the `pytorch` channel
+  - conda-forge::tokenizers  # install this from conda-forge
+
+
+### Initial setup
 
 * Make note of the path to your conda binary:
 ```
@@ -64,7 +72,7 @@ make create_environment
 conda activate reproallthethings
 ```
 
-Now you're ready to run `jupyter notebook` and explore the notebooks in the `notebooks` directory.
+Now you're ready to run `jupyter notebook` (or jupyterlab) and explore the notebooks in the `notebooks` directory.
 
 For more instructions on setting up and maintaining your environment (including how to point your environment at your custom forks and work in progress) see [Setting up and Maintaining your Conda Environment Reproducibly](framework-docs/conda-environments.md).
 
@@ -127,6 +135,8 @@ Project Organization
 * `catalog`
   * Data catalog. This is where config information such as data sources
     and data transformations are saved.
+  * `catalog/config.ini`
+     * Local Data Store. This configuration file is for local data only, and is never checked into the repo.
 * `data`
     * Data directory. Often symlinked to a filesystem with lots of space.
     * `data/raw`
@@ -150,7 +160,9 @@ Project Organization
     * `reports/figures`
         * Generated graphics and figures to be used in reporting.
 * `environment.yml`
-    * The YAML file for reproducing the conda/pip environment.
+    * The user-readable YAML file for reproducing the conda/pip environment.
+* `environment.(platform).lock.yml`
+    * resolved versions, result of processing `environment.yml`
 * `setup.py`
     * Turns contents of `src` into a
     pip-installable python module  (`pip install -e .`) so it can be
@@ -166,4 +178,4 @@ Project Organization
 
 --------
 
-<p><small>This project was built using <a target="_blank" href="https://github.com/hackalog/cookiecutter-easydata">cookiecutter-easydata</a>, a python template aimed at making your data science workflow reproducible.</small></p>
+<p><small>This project was built using <a target="_blank" href="https://github.com/hackalog/easydata">Easydata</a>, a python framework aimed at making your data science workflow reproducible.</small></p>
