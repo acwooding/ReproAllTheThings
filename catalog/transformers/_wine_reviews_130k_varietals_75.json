@@ -1,0 +1,28 @@
+{
+  "input_datasets": [
+    "wine_reviews_130k"
+  ],
+  "output_datasets": [
+    "wine_reviews_130k_varietals_75"
+  ],
+  "transformations": [
+    {
+      "transformer_kwargs": {
+        "added_descr_txt": "Subselection of the dataset that only includes entries for wines with a given varietal that appeas in at least 75 different entries",
+        "dataset_name": "wine_reviews_130k_varietals_75",
+        "drop_extra": true,
+        "serialized_function": {
+          "load_function_args": [],
+          "load_function_kwargs": {
+            "min_reviews": 75
+          },
+          "load_function_module": "src.data.transformer_functions",
+          "load_function_name": "limit_to_common_varietals"
+        },
+        "source_dataset_name": "wine_reviews_130k"
+      },
+      "transformer_module": "src.data.transformer_functions",
+      "transformer_name": "apply_single_function"
+    }
+  ]
+}
