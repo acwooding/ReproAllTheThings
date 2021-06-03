@@ -7,7 +7,6 @@ from collections.abc import MutableMapping
 from ..log import logger
 from ..utils import load_json, save_json
 from .. import paths
-#from ..exceptions import ParameterError
 
 
 __all__ = [
@@ -89,7 +88,7 @@ class Catalog(MutableMapping):
         elif merge_priority == "data":
             self.data = {**disk_data, **data}
         else:
-            raise ValueException("Unknown merge_priority:{merge_priority}")
+            raise ValueError("Unknown merge_priority:{merge_priority}")
 
         self._save()
 
@@ -196,7 +195,7 @@ class Catalog(MutableMapping):
 
         catalog_dir_fq = catalog_path / name
         if not catalog_dir_fq.exists() and not create:
-            raise ParameterError(f"Catalog:{name} not found and create=False")
+            raise FileNotFoundError(f"Catalog:{name} not found and create=False")
 
         catalog = cls(name, create=create, ignore_errors=ignore_errors, catalog_path=catalog_path,
                       delete=False, data=None)
