@@ -94,4 +94,4 @@ dsrc.process_function = partial(process_function, **process_kwargs)
 dsrc.update_catalog()
 
 dag = DatasetGraph()
-dag.add_source(output_dataset=output_ds_name, datasource_name=ds_name, force=True)
+dag.add_source(output_dataset=output_ds_name, datasource_name=ds_name, overwrite_catalog=True)
