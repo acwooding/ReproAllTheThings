@@ -464,7 +464,7 @@ def fetch_file(url=None, url_options=None, contents=None,
         if contents is None:
             raise Exception(f"fetch_action == 'create' but `contents` unspecified")
         if hash_value is not None:
-            logger.warning(f"Hash value ({hash_value}) ignored for fetch_action=='create'")
+            logger.debug(f"Hash value ({hash_value}) ignored for fetch_action=='create'")
         with open(raw_data_file, 'w') as fw:
             fw.write(contents)
         logger.debug(f"Generating {file_name} hash...")
