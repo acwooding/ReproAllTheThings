@@ -4,7 +4,6 @@ from functools import partial
 from src.data import DataSource, Dataset, DatasetGraph, Catalog
 from src import workflow, paths
 from src.log import logger
-import src.log.debug
 
 # Set up a 20 newsgroups dataset
 
