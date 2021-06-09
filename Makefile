@@ -27,38 +27,24 @@ unfinished:
 #
 
 .PHONY: data
-data: transform_data
+data: datasets
 
-.PHONY: sources
-sources: process_sources
+.PHONY: raw
+raw: datasources
 
-.PHONY: fetch_sources
-fetch_sources: .make.fetch_sources
+.PHONY: datasources
+datasources: .make.datasources
 
-.make.fetch_sources:
-	$(PYTHON_INTERPRETER) -m $(MODULE_NAME).data.make_dataset fetch
-	touch .make.fetch_sources
+.make.datasources: catalog/datasources/*
+	$(PYTHON_INTERPRETER) -m $(MODULE_NAME).workflow datasources
+	#touch .make.datasources
 
-.PHONY: unpack_sources
-unpack_sources: .make.unpack_sources
+.PHONY: datasets
+datasets: .make.datasets
 
-.make.unpack_sources: .make.fetch_sources
-	$(PYTHON_INTERPRETER) -m $(MODULE_NAME).data.make_dataset unpack
-	touch .make.unpack_sources
-
-.PHONY: process_sources
-process_sources: .make.process_sources
-
-.make.process_sources: .make.unpack_sources
-	$(PYTHON_INTERPRETER) -m $(MODULE_NAME).data.make_dataset process
-	touch .make.process_sources
-
-.PHONY: transform_data
-transform_data: .make.transform_data
-
-.make.transform_data: .make.process_sources
-	$(PYTHON_INTERPRETER) -m $(MODULE_NAME).data.apply_transforms
-	touch .make.transform_data
+.make.datasets: catalog/datasets/* catalog/transformers/*
+	$(PYTHON_INTERPRETER) -m $(MODULE_NAME).workflow datasets
+	#touch .make.datasets
 
 .PHONY: clean
 ## Delete all compiled Python files
@@ -87,7 +73,7 @@ clean_workflow:
 
 ## Run all Unit Tests
 test: update_environment
-	pytest --pyargs --doctest-modules --doctest-continue-on-failure --verbose \
+	LOGLEVEL=DEBUG pytest --pyargs --doctest-modules --doctest-continue-on-failure --verbose \
 		$(if $(CI_RUNNING),--ignore=$(TESTS_NO_CI)) \
 		$(MODULE_NAME)
 
@@ -98,9 +84,25 @@ test_with_coverage: update_environment
 		$(MODULE_NAME)
 
 .PHONY: lint
-## Lint using flake8
+# Lint using flake8
 lint:
 	flake8 $(MODULE_NAME)
+
+.phony: help_update_easydata
+help_update_easydata:
+	@echo "\nTo update easydata on an existing repo, verify that you have an 'easydata' branch"
+	@echo "\n>>>git rev-parse -q --verify easydata"
+	@echo "\nIf no output is given, do this:"
+	@echo "\n>>>git branch easydata `git rev-list --max-parents=0 HEAD`"
+	@echo "\nIf no output is given, do this:"
+	@echo "\nCheck-in all your changes, then merge the new easydata branch into yours"
+	@echo "\ngit branch easydata"
+	@echo "# replace easydata with https://github.com/hackalog/easydata if needed"
+	@echo "pushd .. && cookiecutter --config-file $(PROJECT_NAME)/.easydata.yml easydata -f --no-input && popd"
+	@echo "git add -p  # add all the changes"
+	@echo "git commit -m 'sync with easydata'"
+	@echo "git checkout main"
+	@echo "git merge easydata"
 
 .PHONY: debug
 ## dump useful debugging information to $(DEBUG_FILE)
