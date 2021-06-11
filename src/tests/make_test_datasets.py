@@ -1,10 +1,9 @@
 from sklearn.datasets import fetch_20newsgroups
 from functools import partial
 
-from src.data import DataSource, Dataset, TransformerGraph
+from src.data import DataSource, Dataset, DatasetGraph, Catalog
 from src import workflow, paths
 from src.log import logger
-import src.log.debug
 
 # Set up a 20 newsgroups dataset
 
@@ -91,7 +90,7 @@ process_function = process_20_newsgroups
 process_kwargs = {}
 
 dsrc.process_function = partial(process_function, **process_kwargs)
-workflow.add_datasource(dsrc)
+dsrc.update_catalog()
 
-dag = TransformerGraph(catalog_path=paths['catalog_path'])
-dag.add_source(output_dataset=output_ds_name, datasource_name=ds_name, force=True)
+dag = DatasetGraph()
+dag.add_source(output_dataset=output_ds_name, datasource_name=ds_name, overwrite_catalog=True)
