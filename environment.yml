@@ -10,7 +10,6 @@ dependencies:
     - nbdime
     - datashader
     - holoviews
-    - umap-learn>=0.4.0rc1
     - enstop
     - coveralls
     - git+https://github.com/TutteInstitute/vectorizers.git
@@ -39,3 +38,5 @@ dependencies:
   - numba
   - fsspec
   - python=3.7
+  - conda-forge::hdbscan
+  - conda-forge::umap-learn
