@@ -40,3 +40,4 @@ dependencies:
   - python=3.7
   - conda-forge::hdbscan
   - conda-forge::umap-learn
+  - conda-forge::rich
