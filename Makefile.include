@@ -1,10 +1,14 @@
 CONDA_EXE ?= ~/miniconda3/bin/conda
+PYTHON_INTERPRETER := $(if $(findstring Python 3,$(shell python --version)),python,python3)
 DEBUG_FILE := debug.txt
 MODULE_NAME := src
 TESTS_NO_CI = $(MODULE_NAME)/tests/no_ci
-PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+PROJECT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME := reproallthethings
-PYTHON_INTERPRETER := python3
 ARCH := $(shell $(PYTHON_INTERPRETER) -c "import platform; print(platform.platform())")
 VIRTUALENV := conda
 EASYDATA_LOCKFILE := environment.$(ARCH).lock.yml
+PLATFORM = $(shell $(PYTHON_INTERPRETER) -c "import sys; print(sys.platform)")
+
+rm = python scripts/rm.py "$(1)"
+type = python -c "import pathlib; print(pathlib.Path('$(1)').read_text())"
