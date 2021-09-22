@@ -8,21 +8,14 @@
   "transformations": [
     {
       "transformer_kwargs": {
-        "added_descr_txt": "Subselection of the dataset that only includes entries for wines with a given varietal that appeas in at least 75 different entries",
-        "dataset_name": "wine_reviews_130k_varietals_75",
-        "drop_extra": true,
-        "serialized_function": {
-          "load_function_args": [],
-          "load_function_kwargs": {
-            "min_reviews": 75
-          },
-          "load_function_module": "src.data.transformer_functions",
-          "load_function_name": "limit_to_common_varietals"
-        },
-        "source_dataset_name": "wine_reviews_130k"
+        "notebook_name": "03-Add-Dataset-Common-Varietals.ipynb",
+        "notebook_path": "/Users/kjell/Documents/devel/timc/ReproAllTheThings/notebooks",
+        "output_dataset_names": [
+          "wine_reviews_130k_varietals_75"
+        ]
       },
       "transformer_module": "src.data.transformer_functions",
-      "transformer_name": "apply_single_function"
+      "transformer_name": "run_notebook_transformer"
     }
   ]
 }
