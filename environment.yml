@@ -42,3 +42,6 @@ dependencies:
   - conda-forge::hdbscan
   - conda-forge::umap-learn
   - conda-forge::rich
+  - jupyterlab
+  - jupyter_bokeh
+  - ipympl
