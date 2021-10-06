@@ -8,6 +8,7 @@ dependencies:
     - python-dotenv>=0.5.1
     - nbval
     - nbdime
+    - bokeh!=2.4.0
     - datashader
     - holoviews
     - enstop
@@ -19,7 +20,7 @@ dependencies:
   - wheel
   - git>=2.5  # for git worktree template updating
   - sphinx
-  - bokeh
+  - bokeh!=2.4.0
   - click
   - colorcet
   - coverage
@@ -41,3 +42,6 @@ dependencies:
   - conda-forge::hdbscan
   - conda-forge::umap-learn
   - conda-forge::rich
+  - jupyterlab
+  - jupyter_bokeh
+  - ipympl
